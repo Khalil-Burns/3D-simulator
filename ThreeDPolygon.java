@@ -97,37 +97,37 @@ public class ThreeDPolygon {
         // this.normal.z /= this.normalLength;
 
         //System.out.println("Origin: " + this.origin.x + " " + this.origin.y + " " + this.origin.z + " P1: " + this.x[1] + " " + this.y[1] + " " + this.z[1] + " P2: " + this.x[2] + " " + this.y[2] + " " + this.z[2]);
-        
+        int newRed = this.red, newGreen = this.green, newBlue = this.blue;
         if (!this.created) {
             this.created = true;
             this.colorShade = Matrix.dotProduct(this.normal, Main.lightSource);
-            this.colorShade -= 2;
-            this.red += this.colorShade * 40;
-            this.green += this.colorShade * 40;
-            this.blue += this.colorShade * 40;
+            this.colorShade -= 1;
+            newRed += this.colorShade * 40;
+            newGreen += this.colorShade * 40;
+            newBlue += this.colorShade * 40;
 
-            if (this.red > 255) {
-                this.red = 255;
+            if (newRed > 255) {
+                newRed = 255;
             }
-            if (this.red < 0) {
-                this.red = 0;
-            }
-
-            if (this.green > 255) {
-                this.green = 255;
-            }
-            if (this.green < 0) {
-                this.green = 0;
+            if (newRed < 0) {
+                newRed = 0;
             }
 
-            if (this.blue > 255) {
-                this.blue = 255;
+            if (newGreen > 255) {
+                newGreen = 255;
             }
-            if (this.blue < 0) {
-                this.blue = 0;
+            if (newGreen < 0) {
+                newGreen = 0;
+            }
+
+            if (newBlue > 255) {
+                newBlue = 255;
+            }
+            if (newBlue < 0) {
+                newBlue = 0;
             }
             //System.out.println(this.colorShade + " " + this.red + " " + this.green + " " + this.blue);
-            c = new Color(this.red, this.green, this.blue, c.getAlpha());
+            c = new Color(newRed, newGreen, newBlue, c.getAlpha());
         }
         
         this.newPolygon = new PolygonObject(newX, newY, this.c);

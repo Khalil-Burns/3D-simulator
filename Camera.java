@@ -21,13 +21,13 @@ public class Camera {
         //System.out.println(this.y);
     }
     public void moveZ(double _z) {
-        if (this.z >= 0) {
+        //if (this.z >= 0) {
             this.z += _z;
             //System.out.println(this.z);
-        }
+        /*}
         else {
             this.z = 0;
-        }
+        }*/
     }
     public void changeFov(double angle) {
         this.fov = 2*arctan(tan(angle/2.0)*aspectRatio);

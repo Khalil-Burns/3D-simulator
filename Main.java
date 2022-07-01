@@ -3,6 +3,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
+import java.io.*;
 
 public class Main extends JPanel implements KeyListener {
 
@@ -43,9 +44,11 @@ public class Main extends JPanel implements KeyListener {
         g2.setColor(Color.gray);
         g2.drawPolygon(p);*/
         if (doneCreate){
-            sortPolygons(0, polygons.size() - 1);
             for (int i = polygons.size() - 1; i >= 0; i--) {
                 polygons.get(i).updatePolygon();
+            }
+            sortPolygons(0, polygons.size() - 1);
+            for (int i = polygons.size() - 1; i >= 0; i--) {
                 //System.out.println(polygons.get(i).normal.x + " " + polygons.get(i).normal.y + " " + polygons.get(i).normal.z);
                 mPoint camRay = Matrix.vecSub(new mPoint(polygons.get(i).origin.x, polygons.get(i).origin.y, polygons.get(i).origin.z), new mPoint(cam.x, cam.y * -1, cam.z));
                 if (Matrix.dotProduct(polygons.get(i).normal, camRay) < 0) {
@@ -208,6 +211,11 @@ public class Main extends JPanel implements KeyListener {
         pressed.put("w", false);
         pressed.put("s", false);
 
+        double lightDirLength = Math.sqrt(lightSource.x * lightSource.x + lightSource.y * lightSource.y + lightSource.z * lightSource.z);
+        lightSource.x /= lightDirLength;
+        lightSource.y /= lightDirLength;
+        lightSource.z /= lightDirLength;
+
         int startX = 0;
         int startY = 0;
         int startZ = 0;
@@ -254,26 +262,70 @@ public class Main extends JPanel implements KeyListener {
         mesh.triangles.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 1}, new double[]{0, 0, 0}, new double[]{1, 0, 0}), Color.BLACK));
         */
         Color cubeColor = new Color(200,200,255,255);
-        cubeColor = Color.WHITE;
-        //South
-        polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 3}, new double[]{0, 1, 3}, new double[]{1, 1, 3}), cubeColor));
-        polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 3}, new double[]{1, 1, 3}, new double[]{1, 0, 3}), cubeColor));
-        // //East
-        polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 3}, new double[]{1, 1, 3}, new double[]{1, 1, 4}), cubeColor));
-        polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 3}, new double[]{1, 1, 4}, new double[]{1, 0, 4}), cubeColor));
-        //North
-        polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4}, new double[]{1, 1, 4}, new double[]{0, 1, 4}), cubeColor));
-        polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4}, new double[]{0, 1, 4}, new double[]{0, 0, 4}), cubeColor));
-        //West
-        polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 4}, new double[]{0, 1, 4}, new double[]{0, 1, 3}), cubeColor));
-        polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 4}, new double[]{0, 1, 3}, new double[]{0, 0, 3}), cubeColor));
-        //Top
-        polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 1, 3}, new double[]{0, 1, 4}, new double[]{1, 1, 4}), cubeColor));
-        polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 1, 3}, new double[]{1, 1, 4}, new double[]{1, 1, 3}), cubeColor));
-        //Bottom
-        polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4}, new double[]{0, 0, 4}, new double[]{0, 0, 3}), cubeColor));
-        polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4}, new double[]{0, 0, 3}, new double[]{1, 0, 3}), cubeColor));
-        
+        // cubeColor = Color.WHITE;
+        // //South
+        // polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 3}, new double[]{0, 1, 3}, new double[]{1, 1, 3}), cubeColor));
+        // polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 3}, new double[]{1, 1, 3}, new double[]{1, 0, 3}), cubeColor));
+        // // //East
+        // polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 3}, new double[]{1, 1, 3}, new double[]{1, 1, 4}), cubeColor));
+        // polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 3}, new double[]{1, 1, 4}, new double[]{1, 0, 4}), cubeColor));
+        // //North
+        // polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4}, new double[]{1, 1, 4}, new double[]{0, 1, 4}), cubeColor));
+        // polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4}, new double[]{0, 1, 4}, new double[]{0, 0, 4}), cubeColor));
+        // //West
+        // polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 4}, new double[]{0, 1, 4}, new double[]{0, 1, 3}), cubeColor));
+        // polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 4}, new double[]{0, 1, 3}, new double[]{0, 0, 3}), cubeColor));
+        // //Top
+        // polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 1, 3}, new double[]{0, 1, 4}, new double[]{1, 1, 4}), cubeColor));
+        // polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 1, 3}, new double[]{1, 1, 4}, new double[]{1, 1, 3}), cubeColor));
+        // //Bottom
+        // polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4}, new double[]{0, 0, 4}, new double[]{0, 0, 3}), cubeColor));
+        // polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4}, new double[]{0, 0, 3}, new double[]{1, 0, 3}), cubeColor));
+        loadObjectFromFile("icosahedron.obj", cubeColor);
         doneCreate = true;
+    }
+
+    public static void loadObjectFromFile(String fileName, Color c) {
+        ArrayList<double[]> verticeList = new ArrayList<double[]>();
+        verticeList.add(new double[]{});
+        try {
+            File obj = new File(fileName);
+            Scanner fileReader = new Scanner(obj);
+            while (fileReader.hasNextLine()) {
+                String data = fileReader.next();
+                //System.out.println(data);
+                double v1, v2, v3;
+                if (data.charAt(0) == '#') {
+                    fileReader.nextLine();
+                }
+                else if (data.charAt(0) == 'v' && data.length() == 1) {
+                    v1 = fileReader.nextDouble();
+                    v2 = fileReader.nextDouble();
+                    v3 = fileReader.nextDouble();
+                    verticeList.add(new double[]{v1, v2, v3});
+                }
+                else if (data.charAt(0) == 'f' && data.length() == 1) {
+
+                    data = fileReader.next();
+                    data = data.substring(0, data.indexOf("/"));
+                    v1 = Double.parseDouble(data);
+
+                    data = fileReader.next();
+                    data = data.substring(0, data.indexOf("/"));
+                    v2 = Double.parseDouble(data);
+
+                    data = fileReader.next();
+                    data = data.substring(0, data.indexOf("/"));
+                    v3 = Double.parseDouble(data);
+
+                    /*v1 = fileReader.nextDouble();
+                    v2 = fileReader.nextDouble();
+                    v3 = fileReader.nextDouble();*/
+                    polygons.add(new ThreeDPolygon(new Triangle(verticeList.get((int)v1), verticeList.get((int)v2), verticeList.get((int)v3)), c));
+                }
+            }
+            fileReader.close();
+        }
+        catch (FileNotFoundException e) {}
     }
 }
