@@ -23,7 +23,7 @@ public class PolygonObject {
         g.setColor(this.c);
         g.drawPolygon(this.p);
         //g.setColor(this.c);
-        //g.fillPolygon(this.p);
+        g.fillPolygon(this.p);
 
         // for (int i = 0; i < this.xPoints.length; i++) {
         //     if (i == this.xPoints.length - 1) {

@@ -4,6 +4,7 @@ public class ThreeDPolygon {
 
     PolygonObject newPolygon;
     Color c;
+    int red, green, blue;
     double[] x;
     double[] y;
     double[] z;
@@ -11,12 +12,17 @@ public class ThreeDPolygon {
     mPoint normal, line1, line2;
     double normalLength;
     mPoint origin;
+    double colorShade;
+    boolean created = false;
 
     public ThreeDPolygon(double[] _x, double[] _y, double[] _z, Color _c) {
         this.x = _x;
         this.y = _y;
         this.z = _z;
         this.c = _c;
+        this.red = this.c.getRed();
+        this.green = this.c.getGreen();
+        this.blue = this.c.getBlue();
         this.distToCam = new double[this.x.length];
 
         this.updatePolygon();
@@ -91,6 +97,39 @@ public class ThreeDPolygon {
         // this.normal.z /= this.normalLength;
 
         //System.out.println("Origin: " + this.origin.x + " " + this.origin.y + " " + this.origin.z + " P1: " + this.x[1] + " " + this.y[1] + " " + this.z[1] + " P2: " + this.x[2] + " " + this.y[2] + " " + this.z[2]);
+        
+        if (!this.created) {
+            this.created = true;
+            this.colorShade = Matrix.dotProduct(this.normal, Main.lightSource);
+            this.colorShade -= 2;
+            this.red += this.colorShade * 40;
+            this.green += this.colorShade * 40;
+            this.blue += this.colorShade * 40;
+
+            if (this.red > 255) {
+                this.red = 255;
+            }
+            if (this.red < 0) {
+                this.red = 0;
+            }
+
+            if (this.green > 255) {
+                this.green = 255;
+            }
+            if (this.green < 0) {
+                this.green = 0;
+            }
+
+            if (this.blue > 255) {
+                this.blue = 255;
+            }
+            if (this.blue < 0) {
+                this.blue = 0;
+            }
+            //System.out.println(this.colorShade + " " + this.red + " " + this.green + " " + this.blue);
+            c = new Color(this.red, this.green, this.blue, c.getAlpha());
+        }
+        
         this.newPolygon = new PolygonObject(newX, newY, this.c);
     }
 }

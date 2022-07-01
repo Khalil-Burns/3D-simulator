@@ -30,6 +30,8 @@ public class Main extends JPanel implements KeyListener {
 
     static Mesh mesh = new Mesh();
 
+    static mPoint lightSource = new mPoint(0, 2, -1);
+
     public void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D)g;
         super.paintComponent(g2); 
@@ -50,7 +52,7 @@ public class Main extends JPanel implements KeyListener {
                     polygons.get(i).newPolygon.drawPolygon(g);
                 }
                 
-                // PointConvert temp = new PointConvert(polygons.get(i).normal.x, polygons.get(i).normal.y, polygons.get(i).normal.z);
+                // PointConvert temp = new PointConvert(polygons.get(i).normal.x + polygons.get(i).origin.x, polygons.get(i).normal.y + polygons.get(i).origin.y, polygons.get(i).normal.z + polygons.get(i).origin.z);
                 // PointConvert originTemp = new PointConvert(polygons.get(i).origin);
                 // g.setColor(Color.BLUE);
                 // g.drawLine(originTemp.newX, originTemp.newY, temp.newX,  temp.newY);
@@ -251,25 +253,26 @@ public class Main extends JPanel implements KeyListener {
         mesh.triangles.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 1}, new double[]{0, 0, 1}, new double[]{0, 0, 0}), Color.BLACK));
         mesh.triangles.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 1}, new double[]{0, 0, 0}, new double[]{1, 0, 0}), Color.BLACK));
         */
-
+        Color cubeColor = new Color(200,200,255,255);
+        cubeColor = Color.WHITE;
         //South
-        polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 3}, new double[]{0, 1, 3}, new double[]{1, 1, 3}), Color.BLACK));
-        polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 3}, new double[]{1, 1, 3}, new double[]{1, 0, 3}), Color.BLACK));
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 3}, new double[]{0, 1, 3}, new double[]{1, 1, 3}), cubeColor));
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 3}, new double[]{1, 1, 3}, new double[]{1, 0, 3}), cubeColor));
         // //East
-        polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 3}, new double[]{1, 1, 3}, new double[]{1, 1, 4}), Color.BLACK));
-        polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 3}, new double[]{1, 1, 4}, new double[]{1, 0, 4}), Color.BLACK));
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 3}, new double[]{1, 1, 3}, new double[]{1, 1, 4}), cubeColor));
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 3}, new double[]{1, 1, 4}, new double[]{1, 0, 4}), cubeColor));
         //North
-        polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4}, new double[]{1, 1, 4}, new double[]{0, 1, 4}), Color.BLACK));
-        polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4}, new double[]{0, 1, 4}, new double[]{0, 0, 4}), Color.BLACK));
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4}, new double[]{1, 1, 4}, new double[]{0, 1, 4}), cubeColor));
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4}, new double[]{0, 1, 4}, new double[]{0, 0, 4}), cubeColor));
         //West
-        polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 4}, new double[]{0, 1, 4}, new double[]{0, 1, 3}), Color.BLACK));
-        polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 4}, new double[]{0, 1, 3}, new double[]{0, 0, 3}), Color.BLACK));
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 4}, new double[]{0, 1, 4}, new double[]{0, 1, 3}), cubeColor));
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 4}, new double[]{0, 1, 3}, new double[]{0, 0, 3}), cubeColor));
         //Top
-        polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 1, 3}, new double[]{0, 1, 4}, new double[]{1, 1, 4}), Color.BLACK));
-        polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 1, 3}, new double[]{1, 1, 4}, new double[]{1, 1, 3}), Color.BLACK));
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 1, 3}, new double[]{0, 1, 4}, new double[]{1, 1, 4}), cubeColor));
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 1, 3}, new double[]{1, 1, 4}, new double[]{1, 1, 3}), cubeColor));
         //Bottom
-        polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4}, new double[]{0, 0, 4}, new double[]{0, 0, 3}), Color.BLACK));
-        polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4}, new double[]{0, 0, 3}, new double[]{1, 0, 3}), Color.BLACK));
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4}, new double[]{0, 0, 4}, new double[]{0, 0, 3}), cubeColor));
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4}, new double[]{0, 0, 3}, new double[]{1, 0, 3}), cubeColor));
         
         doneCreate = true;
     }
