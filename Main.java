@@ -18,17 +18,17 @@ public class Main extends JPanel implements KeyListener {
 
     static double fNear = 0.1;
     static double fFar = 1000.0;
-    static double fFov = 90.0;
+    static double fFov = 120.0;
     static double fAspectRatio = 1.0 / aspectRatio;
     static double fFovRad = 1.0 / Math.tan(Math.toRadians(fFov * 0.5));
 
-    static Camera cam = new Camera(0, -2, 0, 120, aspectRatio);
+    static Camera cam = new Camera(0, 0, 0, 120, aspectRatio);
 
     static ArrayList<ThreeDPolygon> polygons = new ArrayList<ThreeDPolygon>();
 
     static int[] lineWidth = new int[1];
 
-    static Mesh meshCube = new Mesh();
+    static Mesh mesh = new Mesh();
 
     public void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D)g;
@@ -44,11 +44,17 @@ public class Main extends JPanel implements KeyListener {
             sortPolygons(0, polygons.size() - 1);
             for (int i = polygons.size() - 1; i >= 0; i--) {
                 polygons.get(i).updatePolygon();
-                polygons.get(i).newPolygon.drawPolygon(g);
+                //System.out.println(polygons.get(i).normal.x + " " + polygons.get(i).normal.y + " " + polygons.get(i).normal.z);
+                mPoint camRay = Matrix.vecSub(new mPoint(polygons.get(i).origin.x, polygons.get(i).origin.y, polygons.get(i).origin.z), new mPoint(cam.x, cam.y * -1, cam.z));
+                if (Matrix.dotProduct(polygons.get(i).normal, camRay) < 0) {
+                    polygons.get(i).newPolygon.drawPolygon(g);
+                }
+                
+                // PointConvert temp = new PointConvert(polygons.get(i).normal.x, polygons.get(i).normal.y, polygons.get(i).normal.z);
+                // PointConvert originTemp = new PointConvert(polygons.get(i).origin);
+                // g.setColor(Color.BLUE);
+                // g.drawLine(originTemp.newX, originTemp.newY, temp.newX,  temp.newY);
             }
-            /*for (int i = 0; i < meshCube.triangles.size(); i++) {
-
-            }*/
         }
         move();
         repaint();
@@ -220,27 +226,51 @@ public class Main extends JPanel implements KeyListener {
                 y1[j] = _y[j + i];
                 z1[j] = _z[j + i];
             }
-            polygons.add(new ThreeDPolygon(x1, y1, z1, new Color(160 + 10*(i/4), 130, 255 - 20*(i/4), 255)));
+            //polygons.add(new ThreeDPolygon(x1, y1, z1, new Color(160 + 10*(i/4), 130, 255 - 20*(i/4), 255)));
         }
         //polygons.add(new ThreeDPolygon(new double[] {-5, 4, 4, -5}, new double[] {0, 0, 0, 0}, new double[] {1, 1, 10, 10}, new Color(160, 255, 160, 255)));
         
 
-        /*meshCube.triangles = new ArrayList<>();
-
-        meshCube.triangles.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 0}, new double[]{0, 1, 0}, new double[]{1, 1, 0}), Color.BLACK));
-        meshCube.triangles.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 0}, new double[]{1, 1, 0}, new double[]{1, 0, 0}), Color.BLACK));
-        meshCube.triangles.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 0}, new double[]{1, 1, 0}, new double[]{1, 1, 1}), Color.BLACK));
-        meshCube.triangles.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 0}, new double[]{1, 1, 1}, new double[]{1, 0, 1}), Color.BLACK));
-        meshCube.triangles.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 0}, new double[]{1, 1, 1}, new double[]{0, 1, 1}), Color.BLACK));
-        meshCube.triangles.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 1}, new double[]{0, 1, 1}, new double[]{0, 0, 1}), Color.BLACK));
-        meshCube.triangles.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 1}, new double[]{0, 1, 1}, new double[]{0, 1, 0}), Color.BLACK));
-        meshCube.triangles.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 1}, new double[]{0, 1, 0}, new double[]{0, 0, 0}), Color.BLACK));
-        meshCube.triangles.add(new ThreeDPolygon(new Triangle(new double[]{0, 1, 0}, new double[]{0, 1, 1}, new double[]{1, 1, 1}), Color.BLACK));
-        meshCube.triangles.add(new ThreeDPolygon(new Triangle(new double[]{0, 1, 0}, new double[]{1, 1, 1}, new double[]{1, 1, 0}), Color.BLACK));
-        meshCube.triangles.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 1}, new double[]{0, 1, 1}, new double[]{1, 1, 1}), Color.BLACK));
-        meshCube.triangles.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 1}, new double[]{0, 0, 0}, new double[]{1, 0, 0}), Color.BLACK));
+        /*mesh.triangles = new ArrayList<>();
+        //South
+        mesh.triangles.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 0}, new double[]{0, 1, 0}, new double[]{1, 1, 0}), Color.BLACK));
+        mesh.triangles.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 0}, new double[]{1, 1, 0}, new double[]{1, 0, 0}), Color.BLACK));
+        //East
+        mesh.triangles.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 0}, new double[]{1, 1, 0}, new double[]{1, 1, 1}), Color.BLACK));
+        mesh.triangles.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 0}, new double[]{1, 1, 1}, new double[]{1, 0, 1}), Color.BLACK));
+        //North
+        mesh.triangles.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 1}, new double[]{1, 1, 1}, new double[]{0, 1, 1}), Color.BLACK));
+        mesh.triangles.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 1}, new double[]{0, 1, 1}, new double[]{0, 0, 1}), Color.BLACK));
+        //West
+        mesh.triangles.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 1}, new double[]{0, 1, 1}, new double[]{0, 1, 0}), Color.BLACK));
+        mesh.triangles.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 1}, new double[]{0, 1, 0}, new double[]{0, 0, 0}), Color.BLACK));
+        //Top
+        mesh.triangles.add(new ThreeDPolygon(new Triangle(new double[]{0, 1, 0}, new double[]{0, 1, 1}, new double[]{1, 1, 1}), Color.BLACK));
+        mesh.triangles.add(new ThreeDPolygon(new Triangle(new double[]{0, 1, 0}, new double[]{1, 1, 1}, new double[]{1, 1, 0}), Color.BLACK));
+        //Bottom
+        mesh.triangles.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 1}, new double[]{0, 0, 1}, new double[]{0, 0, 0}), Color.BLACK));
+        mesh.triangles.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 1}, new double[]{0, 0, 0}, new double[]{1, 0, 0}), Color.BLACK));
         */
 
+        //South
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 3}, new double[]{0, 1, 3}, new double[]{1, 1, 3}), Color.BLACK));
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 3}, new double[]{1, 1, 3}, new double[]{1, 0, 3}), Color.BLACK));
+        // //East
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 3}, new double[]{1, 1, 3}, new double[]{1, 1, 4}), Color.BLACK));
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 3}, new double[]{1, 1, 4}, new double[]{1, 0, 4}), Color.BLACK));
+        //North
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4}, new double[]{1, 1, 4}, new double[]{0, 1, 4}), Color.BLACK));
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4}, new double[]{0, 1, 4}, new double[]{0, 0, 4}), Color.BLACK));
+        //West
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 4}, new double[]{0, 1, 4}, new double[]{0, 1, 3}), Color.BLACK));
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 4}, new double[]{0, 1, 3}, new double[]{0, 0, 3}), Color.BLACK));
+        //Top
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 1, 3}, new double[]{0, 1, 4}, new double[]{1, 1, 4}), Color.BLACK));
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 1, 3}, new double[]{1, 1, 4}, new double[]{1, 1, 3}), Color.BLACK));
+        //Bottom
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4}, new double[]{0, 0, 4}, new double[]{0, 0, 3}), Color.BLACK));
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4}, new double[]{0, 0, 3}, new double[]{1, 0, 3}), Color.BLACK));
+        
         doneCreate = true;
     }
 }

@@ -8,4 +8,7 @@ public class mPoint {
         this.y = _y;
         this.z = _z;
     }
+    public mPoint() {
+        this(-1,-1, -1);
+    }
 }

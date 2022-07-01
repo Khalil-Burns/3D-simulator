@@ -19,6 +19,12 @@ public class Matrix {
         );
         return(output);
     }
+    public static mPoint vecSub(mPoint v1, mPoint v2) {
+        return(new mPoint(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z));
+    }
+    public static double dotProduct(mPoint v1, mPoint v2) {
+        return(v1.x * v2.x + v1.y * v2.y + v1.z * v2.z);
+    }
     public static mPoint transformPoint(mPoint input) {
         double w = input.x * projMatrix[0][3] + input.y * projMatrix[1][3] + input.z * projMatrix[2][3] + projMatrix[3][3];
         if (w == 0) {

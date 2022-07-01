@@ -2,10 +2,11 @@ public class PointConvert {
 
     double x, y, z;
     int newX, newY;
+    mPoint point;
 
     public PointConvert(double _x, double _y, double _z) {
-        //this(new mPoint(_x, _y, _z));
-        this.x = _x - Main.cam.x;
+        this(new mPoint(_x, _y, _z));
+        /*this.x = _x - Main.cam.x;
         this.y = _y - Main.cam.y;
         this.z = _z - Main.cam.z;
         applyRotations(x, y, z);
@@ -13,25 +14,31 @@ public class PointConvert {
             //newX = (int)(((x)/(z))*50) + _main.width/2;
             //newY = (int)(((y)/(z))*50) + _main.height/2;
         this.newX = (int)(((this.x) * Main.height)/(2 * (this.z))) + Main.width/2;
-        this.newY = (int)(((this.y) * Main.height)/(2 * (this.z))) + Main.height/2;
+        this.newY = (int)(((this.y) * Main.height)/(2 * (this.z))) + Main.height/2;*/
     }
-    public PointConvert(mPoint point) {
-        this(point.x, point.y, point.z);
-        /*this.x = point.x - Main.cam.x;
-        this.y = point.y - Main.cam.y;
-        this.z = point.z + 3.0 - Main.cam.z;
-        applyRotations(x, y, z);
-        mPoint converted = Matrix.transformPoint(point);
-        this.newX = (int)converted.x;
-        this.newY = (int)converted.y;
-        scale();*/
+    public PointConvert(mPoint _point) {
+        //this(point.x, point.y, point.z);
+        this.point = _point;
+        this.point.x -= Main.cam.x;
+        this.point.y *= -1;
+        this.point.y -= Main.cam.y;
+        this.point.z -= Main.cam.z;
+        applyRotations(this.point.x, this.point.y, this.point.z);
+        mPoint converted = Matrix.transformPoint(new mPoint(this.x, this.y, this.z));
+        this.newX = scaleX(converted.x);
+        this.newY = scaleY(converted.y);
+        //System.out.println("point: " + newX + " " + newY + " cam: " + Main.cam.x + " " + Main.cam.z);
     }
 
-    public void scale() {
-        this.newX += 1.0;
-        this.newY += 1.0;
-        this.newX *= Main.width;
-        this.newY *= Main.height;
+    public int scaleX(double x) {
+        x += 1.0;
+        x *= (Main.width / 2.0);
+        return((int)x);
+    }
+    public int scaleY(double y) {
+        y += 1.0;
+        y *= (Main.height / 2.0);
+        return((int)y);
     }
     public void applyRotations(double _x, double _y, double _z) {
         double A = 0, B = -1 * Math.toRadians(Main.getRotationX()), C = Math.toRadians(Main.getRotationY());
@@ -46,7 +53,7 @@ public class PointConvert {
     public void applyTransformations() {
         this.x *= (Main.cam.fov * Main.aspectRatio);
         this.y *= (Main.cam.fov);
-        System.out.println(Main.cam.fov +" " + Main.aspectRatio);
+        //System.out.println(Main.cam.fov +" " + Main.aspectRatio);
     }
     public void rotateXAxis(double _x, double _y, double _z, double A, double B, double C) {
         this.x = _x;
