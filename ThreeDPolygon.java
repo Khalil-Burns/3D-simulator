@@ -1,4 +1,6 @@
 import java.awt.*;
+/*import java.util.LinkedList;
+import java.util.Queue;*/
 
 public class ThreeDPolygon {
 
@@ -143,7 +145,7 @@ public class ThreeDPolygon {
         //this.newPolygon = new PolygonObject(newX, newY, this.c);
         //this.newPolygon.drawPolygon(g);
         
-        Triangle[] clipped = clip(new mPoint(0, 0, 1), new mPoint(0, 0, 1), new Triangle(
+        Triangle[] clipped = clip(new mPoint(0, 0, 0.1), new mPoint(0, 0, 1), new Triangle(
             new double[]{transformX[0], transformY[0], transformZ[0]},
             new double[]{transformX[1], transformY[1], transformZ[1]}, 
             new double[]{transformX[2], transformY[2], transformZ[2]}
@@ -151,6 +153,7 @@ public class ThreeDPolygon {
         //System.out.println(clipped.length);
         mPoint camRay = Matrix.vecSub(new mPoint(this.origin.x, this.origin.y, this.origin.z), new mPoint(Main.cam.x, Main.cam.y, Main.cam.z));
         double[] tempX = new double[3], tempY = new double[3], tempZ = new double[3];
+        double[] newV1 = new double[3], newV2 = new double[3], newV3 = new double[3];
         if (Matrix.dotProduct(this.normal, camRay) < 0) {
             for (int i = 0; i < clipped.length; i++) {
                 int[] newXPoints = new int[3], newYPoints = new int[3];
@@ -161,11 +164,68 @@ public class ThreeDPolygon {
                     tempZ[i] = newNewPoint.z;
                     newXPoints[j] = PointConvert.scaleX(newNewPoint.x);
                     newYPoints[j] = PointConvert.scaleY(-newNewPoint.y);
+                    switch(j) {
+                        case 0:
+                            newV1[0] = newXPoints[j];
+                            newV1[1] = newYPoints[j];
+                            newV1[2] = newNewPoint.z;
+                            break;
+                        case 1:
+                            newV2[0] = newXPoints[j];
+                            newV2[1] = newYPoints[j];
+                            newV2[2] = newNewPoint.z;
+                            break;
+                        case 2:
+                            newV3[0] = newXPoints[j];
+                            newV3[1] = newYPoints[j];
+                            newV3[2] = newNewPoint.z;
+                            break;
+                    }
                     //System.out.println(newX[j] + " " + newY[j] + " " + clipped.length + c.toString());
                 }
                 //System.out.println("V1: " + newXPoints[0] + ", " + newYPoints[0] + ", V2: " + newXPoints[1] + ", " + newYPoints[1] + ", V3: " + newXPoints[2] + ", " + newYPoints[2] + ", " + i);
                 PolygonObject newNewPolygon = new PolygonObject(newXPoints, newYPoints, this.c);
-                newNewPolygon.drawPolygon(g, tempX, tempY, tempZ);
+                newNewPolygon.drawPolygon(g/*, tempX, tempY, tempZ*/);
+
+
+                /*  this currently does not work, and doesn't seem to have a large effect
+                Queue<Triangle> listTris = new LinkedList<Triangle>();
+                listTris.add(new Triangle(newV1, newV2, newV3));
+                int nNewTris = 1;
+                for (int p = 0; p < 4; p++) {
+                    int nTrisToAdd = 0;
+                    while (nNewTris > 0) {
+                        Triangle temp = listTris.remove();
+                        nNewTris--;
+                        Triangle[] reClipped;
+                        switch(p) {
+                            case 0:
+                                reClipped = clip(new mPoint(0, 0, 0), new mPoint(0, 1, 0), temp);
+                                break;
+                            case 1:
+                                reClipped = clip(new mPoint(0, Main.height - 1.0, 0), new mPoint(0, -1, 0), temp);
+                                break;
+                            case 2:
+                                reClipped = clip(new mPoint(0, 0, 0), new mPoint(1, 0, 0), temp);
+                                break;
+                            default:
+                                reClipped = clip(new mPoint(Main.width - 1.0, 0, 0), new mPoint(-1, 0, 0), temp);
+                                break;
+                        }
+                        nTrisToAdd = reClipped.length;
+                        
+                        for (int w = 0; w < nTrisToAdd; w++) {
+                            listTris.add(reClipped[w]);
+                        }
+                    }
+                    nNewTris = listTris.size();
+                }
+                for (int h = 0; h < listTris.size(); h++) {
+                    Triangle newTemp = listTris.remove();
+
+                    PolygonObject newNewPolygon = new PolygonObject(new int[]{(int)newTemp.vertices[0].x, (int)newTemp.vertices[1].x, (int)newTemp.vertices[2].x}, new int[]{(int)newTemp.vertices[0].y, (int)newTemp.vertices[1].y, (int)newTemp.vertices[2].y}, this.c);
+                    newNewPolygon.drawPolygon(g, tempX, tempY, tempZ);
+                }*/
             }
         }
     }

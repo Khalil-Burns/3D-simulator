@@ -18,15 +18,15 @@ public class PolygonObject {
         this.yPoints = y;
     }
 
-    public void drawPolygon(Graphics g, double[] x, double[] y, double[] z) {
-        g.setColor(Color.BLACK);
-        g.drawPolygon(this.p);
+    public void drawPolygon(Graphics g/*, double[] x, double[] y, double[] z*/) {
+        //g.setColor(Color.BLACK);
+        //g.drawPolygon(this.p);
         g.setColor(this.c);
         g.fillPolygon(this.p);
         g.setColor(Color.BLACK);
-        for (int i = 0; i < 3; i++) {
+        /*for (int i = 0; i < 3; i++) {
             g.drawString("("+round(x[i])+", "+round(y[i]) + ", "+ round(z[i])+")", this.xPoints[i], this.yPoints[i]);
-        }
+        }*/
 
         // for (int i = 0; i < this.xPoints.length; i++) {
         //     if (i == this.xPoints.length - 1) {
