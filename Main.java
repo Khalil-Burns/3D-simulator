@@ -10,7 +10,7 @@ public class Main extends JPanel implements KeyListener {
     static boolean doneCreate = false;
 
     double moveX = 0, moveY = 0, moveZ = 0;
-    double speedX = 0.04, speedY = 0.04, speedZ = 0.04;
+    double speedX = 0.1, speedY = 0.1, speedZ = 0.1;
     static HashMap<String, Boolean> pressed = new HashMap<String, Boolean>();
 
     static int width = (int)Toolkit.getDefaultToolkit().getScreenSize().getWidth(), height = (int)Toolkit.getDefaultToolkit().getScreenSize().getHeight();
@@ -23,7 +23,7 @@ public class Main extends JPanel implements KeyListener {
     static double fAspectRatio = 1.0 / aspectRatio;
     static double fFovRad = 1.0 / Math.tan(Math.toRadians(fFov * 0.5));
 
-    static Camera cam = new Camera(0, 0, 0, 120, aspectRatio);
+    static Camera cam = new Camera(10, 15, 5, 120, aspectRatio);
 
     static ArrayList<ThreeDPolygon> polygons = new ArrayList<ThreeDPolygon>();
 
@@ -31,10 +31,11 @@ public class Main extends JPanel implements KeyListener {
 
     static Mesh mesh = new Mesh();
 
-    static mPoint lightSource = new mPoint(1, 2, 3);
+    static mPoint lightSource = new mPoint(0, 1, 0);
 
     static JFrame frame;
     static long last;
+    static int crossHairLength = 7;
 
     public void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D)g;
@@ -51,19 +52,16 @@ public class Main extends JPanel implements KeyListener {
             for (int i = polygons.size() - 1; i >= 0; i--) {
                 polygons.get(i).updatePolygon(g);
             }
-            for (int i = polygons.size() - 1; i >= 0; i--) {
-                //System.out.println(polygons.get(i).normal.x + " " + polygons.get(i).normal.y + " " + polygons.get(i).normal.z);
-                mPoint camRay = Matrix.vecSub(new mPoint(polygons.get(i).origin.x, polygons.get(i).origin.y, polygons.get(i).origin.z), new mPoint(cam.x, cam.y * -1, cam.z));
-                if (Matrix.dotProduct(polygons.get(i).normal, camRay) < 0) {
-                    //polygons.get(i).newPolygon.drawPolygon(g);
-                }
-                
-                // PointConvert temp = new PointConvert(polygons.get(i).normal.x + polygons.get(i).origin.x, polygons.get(i).normal.y + polygons.get(i).origin.y, polygons.get(i).normal.z + polygons.get(i).origin.z);
-                // PointConvert originTemp = new PointConvert(polygons.get(i).origin);
-                // g.setColor(Color.BLUE);
-                // g.drawLine(originTemp.newX, originTemp.newY, temp.newX,  temp.newY);
-            }
         }
+        g.setColor(Color.BLACK);
+        g.drawString("X: " + Math.round(cam.x*1000)/1000.0, 10, 20);
+        g.drawString("Y: " + Math.round(cam.y*1000)/1000.0, 10, 30);
+        g.drawString("Z: " + Math.round(cam.z*1000)/1000.0, 10, 40);
+
+        g2.setStroke(new BasicStroke(2));
+        g.setColor(Color.gray);
+        g.drawLine((int)(width / 2.0 - crossHairLength), (int)(height / 2.0), (int)(width / 2.0 + crossHairLength), (int)(height / 2.0));
+        g.drawLine((int)(width / 2.0), (int)(height / 2.0 - crossHairLength), (int)(width / 2.0), (int)(height / 2.0 + crossHairLength));
         move();
         if (System.nanoTime() - last > 10000000) {
             frame.setTitle("3D Simulation, " + (1000000000 / (System.nanoTime() - last)) + "fps");
@@ -286,7 +284,8 @@ public class Main extends JPanel implements KeyListener {
         // polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4}, new double[]{0, 0, 3}, new double[]{1, 0, 3}), cubeColor));
         
         cubeColor = new Color(200,200,255,255);
-        loadObjectFromFile("icosahedron.obj", cubeColor);
+        cubeColor = Color.gray;
+        loadObjectFromFile("terrain.obj", cubeColor);
         last = System.nanoTime();
         doneCreate = true;
     }
@@ -303,7 +302,7 @@ public class Main extends JPanel implements KeyListener {
                 /*if (data.charAt(0) == '#') {
                     fileReader.nextLine();
                 }
-                else */if (data.charAt(0) == 'v') {
+                else */if (data.charAt(0) == 'v' && data.charAt(1) == ' ') {
                     data = data.substring(data.indexOf(" ") + 1);
                     v1 = Double.parseDouble(data.substring(0, data.indexOf(" ")));
                     data = data.substring(data.indexOf(" ") + 1);
