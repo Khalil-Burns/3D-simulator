@@ -19,12 +19,51 @@ public class Matrix {
         );
         return(output);
     }
+    public static mPoint vecAdd(mPoint v1, mPoint v2) {
+        return(new mPoint(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z));
+    }
     public static mPoint vecSub(mPoint v1, mPoint v2) {
         return(new mPoint(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z));
+    }
+    public static mPoint multiply(mPoint v, double scaler) {
+        return(new mPoint(v.x * scaler, v.y * scaler, v.z * scaler));
+    }
+    public static mPoint divide(mPoint v, double scaler) {
+        return(new mPoint(v.x / scaler, v.y / scaler, v.z / scaler));
     }
     public static double dotProduct(mPoint v1, mPoint v2) {
         return(v1.x * v2.x + v1.y * v2.y + v1.z * v2.z);
     }
+    public static double vecLength(mPoint v) {
+        return(Math.sqrt(dotProduct(v, v)));
+    }
+    public static mPoint vecNormalise(mPoint v) {
+        double l = vecLength(v);
+        return(new mPoint(v.x / l, v.y / l, v.z / l));
+    }
+    public static mPoint crossProduct(mPoint v1, mPoint v2) {
+        mPoint output = new mPoint();
+        output.x = v1.y * v2.z - v1.z * v2.y;
+		output.y = v1.z * v2.x - v1.x * v2.z;
+		output.z = v1.x * v2.y - v1.y * v2.x;
+        return(output);
+    }
+    public static mPoint intersectVectors(mPoint plane, mPoint pNorm, mPoint lineStart, mPoint lineEnd) {
+        pNorm = vecNormalise(pNorm);
+        double planeD = -dotProduct(pNorm, plane);
+        double ad = dotProduct(lineStart, pNorm);
+        double bd = dotProduct(lineEnd, pNorm);
+        double t = (-planeD - ad) / (bd - ad);
+
+        mPoint startToEnd = vecSub(lineEnd, lineStart);
+        mPoint lineToIntersect = multiply(startToEnd, t);
+        return(vecAdd(lineStart, lineToIntersect));
+    }
+
+    public static double distance(mPoint p, mPoint pPoint, mPoint pNorm) {
+		return (pNorm.x * p.x + pNorm.y * p.y + pNorm.z * p.z - dotProduct(pNorm, pPoint));
+    }
+
     public static mPoint transformPoint(mPoint input) {
         double w = input.x * projMatrix[0][3] + input.y * projMatrix[1][3] + input.z * projMatrix[2][3] + projMatrix[3][3];
         if (w == 0) {

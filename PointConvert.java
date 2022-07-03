@@ -1,6 +1,6 @@
 public class PointConvert {
 
-    double x, y, z;
+    double x, y, z, tX, tY, tZ;
     int newX, newY;
     mPoint point;
 
@@ -20,22 +20,25 @@ public class PointConvert {
         //this(point.x, point.y, point.z);
         this.point = _point;
         this.point.x -= Main.cam.x;
-        this.point.y *= -1;
+        //this.point.y *= -1;
         this.point.y -= Main.cam.y;
         this.point.z -= Main.cam.z;
         applyRotations(this.point.x, this.point.y, this.point.z);
+        this.tX = this.x;
+        this.tY = this.y;
+        this.tZ = this.z;
         mPoint converted = Matrix.transformPoint(new mPoint(this.x, this.y, this.z));
-        this.newX = scaleX(converted.x);
-        this.newY = scaleY(converted.y);
+        this.newX = scaleX(converted.x * 1);
+        this.newY = scaleY(converted.y * 1);
         //System.out.println("point: " + newX + " " + newY + " cam: " + Main.cam.x + " " + Main.cam.z);
     }
 
-    public int scaleX(double x) {
+    public static int scaleX(double x) {
         x += 1.0;
         x *= (Main.width / 2.0);
         return((int)x);
     }
-    public int scaleY(double y) {
+    public static int scaleY(double y) {
         y += 1.0;
         y *= (Main.height / 2.0);
         return((int)y);

@@ -17,7 +17,7 @@ public class Camera {
         //System.out.println(this.x);
     }
     public void moveY(double _y) {
-        this.y += _y;
+        this.y -= _y;
         //System.out.println(this.y);
     }
     public void moveZ(double _z) {

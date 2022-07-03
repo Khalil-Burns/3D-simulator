@@ -19,11 +19,13 @@ public class PolygonObject {
     }
 
     public void drawPolygon(Graphics g) {
-        //g.setColor(Color.BLACK);
-        g.setColor(this.c);
-        g.drawPolygon(this.p);
+        //System.out.println(a);
+        g.setColor(Color.BLACK);
         //g.setColor(this.c);
+        //g.drawPolygon(this.p);
+        g.setColor(this.c);
         g.fillPolygon(this.p);
+        //System.out.println("yep");
 
         // for (int i = 0; i < this.xPoints.length; i++) {
         //     if (i == this.xPoints.length - 1) {
