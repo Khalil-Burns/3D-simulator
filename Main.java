@@ -37,6 +37,8 @@ public class Main extends JPanel implements KeyListener {
     static long last;
     static int crossHairLength = 7;
 
+    static Point lastX, lastY;
+
     public void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D)g;
         super.paintComponent(g2); 
@@ -67,6 +69,28 @@ public class Main extends JPanel implements KeyListener {
             frame.setTitle("3D Simulation, " + (1000000000 / (System.nanoTime() - last)) + "fps");
             last = System.nanoTime();
         }
+
+        Point info = MouseInfo.getPointerInfo().getLocation();
+        rotationX += ((int)info.getX() - width/2)/2;
+        //rotationX = (int)lastX.getX() - (int)info.getX();
+        //lastX = MouseInfo.getPointerInfo().getLocation();
+
+        rotationY -= ((int)info.getY() - height/2)/2;
+        //rotationY = (int)lastY.getY() - (int)info.getY();
+        //lastY = MouseInfo.getPointerInfo().getLocation();
+        if (rotationY < -90) {
+            rotationY = -90;
+        }
+        if (rotationY > 90) {
+            rotationY = 90;
+        }
+        try {
+            (new Robot()).mouseMove((int)(width/2), (int)(height/2));
+        }
+        catch (AWTException e) {}
+
+
+
         repaint();
     }
 
@@ -78,27 +102,31 @@ public class Main extends JPanel implements KeyListener {
     }
 
     public static double getRotationX() {
-        Point info = MouseInfo.getPointerInfo().getLocation();
-        rotationX += ((int)info.getX() - width/2)/2;
-        try {
+        /*Point info = MouseInfo.getPointerInfo().getLocation();
+        //rotationX += ((int)info.getX() - width/2)/2;
+        rotationX = (int)lastX.getX() - (int)info.getX();
+        lastX = MouseInfo.getPointerInfo().getLocation();
+        /*try {
             (new Robot()).mouseMove((int)(width/2), (int)(info.getY()));
         }
-        catch (AWTException e) {}
+        catch (AWTException e) {}*/
         return(rotationX);
     }
     public static double getRotationY() {
-        Point info = MouseInfo.getPointerInfo().getLocation();
-        rotationY -= ((int)info.getY() - height/2)/2;
+        /*Point info = MouseInfo.getPointerInfo().getLocation();
+        //rotationY -= ((int)info.getY() - height/2)/2;
+        rotationY = (int)lastY.getY() - (int)info.getY();
+        lastY = MouseInfo.getPointerInfo().getLocation();
         if (rotationY < -90) {
             rotationY = -90;
         }
         if (rotationY > 90) {
             rotationY = 90;
         }
-        try {
+        /*try {
             (new Robot()).mouseMove((int)(info.getX()), (int)(height/2));
         }
-        catch (AWTException e) {}
+        catch (AWTException e) {}*/
         return(rotationY);
     }
 
@@ -193,12 +221,16 @@ public class Main extends JPanel implements KeyListener {
     public static void main(String[] args) {
         Main _main = new Main();
         frame = new JFrame("3D Simulation");
+        lastX = MouseInfo.getPointerInfo().getLocation();
+        lastY = MouseInfo.getPointerInfo().getLocation();
         try {
             (new Robot()).mouseMove((int)Toolkit.getDefaultToolkit().getScreenSize().getWidth() / 2, (int)Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 2);
         }
         catch (AWTException e) {}
+        
         frame.setSize(Toolkit.getDefaultToolkit().getScreenSize());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
         //frame.setUndecorated(true);
         frame.setLayout(null);
         frame.setContentPane(_main);
@@ -284,6 +316,7 @@ public class Main extends JPanel implements KeyListener {
         // polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4}, new double[]{0, 0, 3}, new double[]{1, 0, 3}), cubeColor));
         
         cubeColor = new Color(200,200,255,255);
+        //loadObjectFromFile("icosahedron.obj", cubeColor);
         cubeColor = Color.gray;
         loadObjectFromFile("terrain.obj", cubeColor);
         last = System.nanoTime();
