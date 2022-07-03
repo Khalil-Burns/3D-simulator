@@ -11,6 +11,7 @@ public class ThreeDPolygon {
     double[] y;
     double[] z;
     double[] distToCam;
+    double avgDistToCam;
     mPoint normal, line1, line2;
     double normalLength;
     mPoint origin;
@@ -48,6 +49,8 @@ public class ThreeDPolygon {
     }
 
     public void updatePolygon(Graphics g) {
+        this.avgDistToCam = avgDist();
+
         int[] newX = new int[this.x.length];
         int[] newY = new int[this.y.length];
         this.origin = new mPoint(this.x[0], this.y[0], this.z[0]);
@@ -65,14 +68,7 @@ public class ThreeDPolygon {
             transformX[i] = newPoint.tX;
             transformY[i] = newPoint.tY;
             transformZ[i] = newPoint.tZ;
-            if (newPoint.z > 0) {
-                // newX[i] = (int)newPoint.newX;
-                // newY[i] = (int)newPoint.newY;
-                distToCam[i] = Math.sqrt(newPoint.x*newPoint.x + newPoint.y*newPoint.y + newPoint.z*newPoint.z);
-            }
-            else {
-                distToCam[i] = Double.MAX_VALUE;
-            }
+            distToCam[i] = Math.sqrt(newPoint.point.x*newPoint.point.x + newPoint.point.y*newPoint.point.y + newPoint.point.z*newPoint.point.z);
             
             if (i == 1) {
                 // this.line1.x = newPoint.x - this.origin.x;
@@ -233,6 +229,9 @@ public class ThreeDPolygon {
     public Triangle[] clip(mPoint pPoint, mPoint pNorm, Triangle inTri) {
         pNorm = Matrix.vecNormalise(pNorm);
 
+        int[] idxOfInside = new int[3];
+        int[] idxOfOutside = new int[3];
+
         mPoint[] insidePoints = new mPoint[3];
         mPoint[] outsidePoints = new mPoint[3];
         int nInsidePoints = 0;
@@ -244,30 +243,36 @@ public class ThreeDPolygon {
         //System.out.println(d0 + " " + d1 + " " + d2);
 
         if (d0 >= 0) {
-            insidePoints[nInsidePoints++] = inTri.vertices[0];
-            //nInsidePoints++;
+            insidePoints[nInsidePoints] = inTri.vertices[0];
+            idxOfInside[nInsidePoints] = 0;
+            nInsidePoints++;
         }
         else {
-            outsidePoints[nOutsidePoints++] = inTri.vertices[0];
-            //nOutsidePoints++;
+            outsidePoints[nOutsidePoints] = inTri.vertices[0];
+            idxOfOutside[nInsidePoints] = 0;
+            nOutsidePoints++;
         }
 
         if (d1 >= 0) {
-            insidePoints[nInsidePoints++] = inTri.vertices[1];
-            //nInsidePoints++;
+            insidePoints[nInsidePoints] = inTri.vertices[1];
+            idxOfInside[nInsidePoints] = 1;
+            nInsidePoints++;
         }
         else {
-            outsidePoints[nOutsidePoints++] = inTri.vertices[1];
-            //nOutsidePoints++;
+            outsidePoints[nOutsidePoints] = inTri.vertices[1];
+            idxOfOutside[nInsidePoints] = 1;
+            nOutsidePoints++;
         }
 
         if (d2 >= 0) {
-            insidePoints[nInsidePoints++] = inTri.vertices[2];
-            //nInsidePoints++;
+            insidePoints[nInsidePoints] = inTri.vertices[2];
+            idxOfInside[nInsidePoints] = 2;
+            nInsidePoints++;
         }
         else {
-            outsidePoints[nOutsidePoints++] = inTri.vertices[2];
-            //nOutsidePoints++;
+            outsidePoints[nOutsidePoints] = inTri.vertices[2];
+            idxOfOutside[nInsidePoints] = 2;
+            nOutsidePoints++;
         }
         //System.out.println(nInsidePoints);
         if (nInsidePoints == 0) {
@@ -285,6 +290,9 @@ public class ThreeDPolygon {
             out.vertices[0] = insidePoints[0];
             out.vertices[1] = Matrix.intersectVectors(pPoint, pNorm, insidePoints[0], outsidePoints[0]);
             out.vertices[2] = Matrix.intersectVectors(pPoint, pNorm, insidePoints[0], outsidePoints[1]);
+
+            //this.distToCam[idxOfOutside[0]] = out.vertices[1].x * out.vertices[1].x + out.vertices[1].y * out.vertices[1].y + out.vertices[1].z * out.vertices[1].z;
+            //this.distToCam[idxOfOutside[1]] = out.vertices[2].x * out.vertices[2].x + out.vertices[2].y * out.vertices[2].y + out.vertices[2].z * out.vertices[2].z;
             return(new Triangle[]{out});
         }
         if (nInsidePoints == 2 && nOutsidePoints == 1) {
@@ -305,6 +313,9 @@ public class ThreeDPolygon {
             // System.out.println(out2.vertices[0].x + " " + out2.vertices[0].y + " " + out2.vertices[0].z);
             // System.out.println(out2.vertices[1].x + " " + out2.vertices[1].y + " " + out2.vertices[1].z);
             // System.out.println(out2.vertices[2].x + " " + out2.vertices[2].y + " " + out2.vertices[2].z);
+            //double temp1 = out1.vertices[2].x * out1.vertices[2].x + out1.vertices[2].y * out1.vertices[2].y + out1.vertices[2].z * out1.vertices[2].z;
+            //double temp2 = out2.vertices[2].x * out2.vertices[2].x + out2.vertices[2].y * out2.vertices[2].y + out2.vertices[2].z * out2.vertices[2].z;
+            //this.distToCam[idxOfOutside[0]] = temp1 + temp2 / 2.0;
             return(new Triangle[]{out1, out2});
         }
         return(new Triangle[]{});

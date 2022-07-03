@@ -19,7 +19,7 @@ public class Main extends JPanel implements KeyListener {
 
     static double fNear = 0.1;
     static double fFar = 1000.0;
-    static double fFov = 90.0;
+    static double fFov = 120.0;
     static double fAspectRatio = 1.0 / aspectRatio;
     static double fFovRad = 1.0 / Math.tan(Math.toRadians(fFov * 0.5));
 
@@ -202,7 +202,7 @@ public class Main extends JPanel implements KeyListener {
         }
     }
     public int partition(int low, int high) {
-        double pivot = polygons.get(high).avgDist();
+        double pivot = polygons.get(high).avgDistToCam;
         int i = low - 1;
         for (int j = low; j < high; j++) {
             if (polygons.get(j).avgDist() < pivot) {
@@ -318,7 +318,7 @@ public class Main extends JPanel implements KeyListener {
         cubeColor = new Color(200,200,255,255);
         //loadObjectFromFile("icosahedron.obj", cubeColor);
         cubeColor = Color.gray;
-        loadObjectFromFile("terrain.obj", cubeColor);
+        loadObjectFromFile("terrainAndObj.obj", cubeColor);
         last = System.nanoTime();
         doneCreate = true;
     }
