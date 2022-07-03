@@ -48,12 +48,12 @@ public class Matrix {
 		output.z = v1.x * v2.y - v1.y * v2.x;
         return(output);
     }
-    public static mPoint intersectVectors(mPoint plane, mPoint pNorm, mPoint lineStart, mPoint lineEnd) {
+    public static mPoint intersectVectors(mPoint point, mPoint pNorm, mPoint lineStart, mPoint lineEnd) {
         pNorm = vecNormalise(pNorm);
-        double planeD = -dotProduct(pNorm, plane);
+        double planeD = dotProduct(pNorm, point);
         double ad = dotProduct(lineStart, pNorm);
         double bd = dotProduct(lineEnd, pNorm);
-        double t = (-planeD - ad) / (bd - ad);
+        double t = (planeD - ad) / (bd - ad);
 
         mPoint startToEnd = vecSub(lineEnd, lineStart);
         mPoint lineToIntersect = multiply(startToEnd, t);

@@ -150,18 +150,22 @@ public class ThreeDPolygon {
         ));
         //System.out.println(clipped.length);
         mPoint camRay = Matrix.vecSub(new mPoint(this.origin.x, this.origin.y, this.origin.z), new mPoint(Main.cam.x, Main.cam.y, Main.cam.z));
+        double[] tempX = new double[3], tempY = new double[3], tempZ = new double[3];
         if (Matrix.dotProduct(this.normal, camRay) < 0) {
             for (int i = 0; i < clipped.length; i++) {
                 int[] newXPoints = new int[3], newYPoints = new int[3];
                 for (int j = 0; j < 3; j++) {
                     mPoint newNewPoint = Matrix.transformPoint(clipped[i].vertices[j]);
+                    tempX[j] = newNewPoint.x;
+                    tempY[j] = newNewPoint.y;
+                    tempZ[i] = newNewPoint.z;
                     newXPoints[j] = PointConvert.scaleX(newNewPoint.x);
                     newYPoints[j] = PointConvert.scaleY(-newNewPoint.y);
                     //System.out.println(newX[j] + " " + newY[j] + " " + clipped.length + c.toString());
                 }
                 //System.out.println("V1: " + newXPoints[0] + ", " + newYPoints[0] + ", V2: " + newXPoints[1] + ", " + newYPoints[1] + ", V3: " + newXPoints[2] + ", " + newYPoints[2] + ", " + i);
                 PolygonObject newNewPolygon = new PolygonObject(newXPoints, newYPoints, this.c);
-                newNewPolygon.drawPolygon(g);
+                newNewPolygon.drawPolygon(g, tempX, tempY, tempZ);
             }
         }
     }
@@ -216,17 +220,22 @@ public class ThreeDPolygon {
         }
         if (nInsidePoints == 1 && nOutsidePoints == 2) {
             //System.out.println("one inside");
-            Triangle out = new Triangle(inTri.vert1, inTri.vert2, inTri.vert3);
+            Triangle out = new Triangle(new double[]{-1, -1, -1}, new double[]{-1, -1, -1}, new double[]{-1, -1, -1});
+            
+            out.vertices[0] = insidePoints[0];
             out.vertices[1] = Matrix.intersectVectors(pPoint, pNorm, insidePoints[0], outsidePoints[0]);
             out.vertices[2] = Matrix.intersectVectors(pPoint, pNorm, insidePoints[0], outsidePoints[1]);
             return(new Triangle[]{out});
         }
         if (nInsidePoints == 2 && nOutsidePoints == 1) {
             //System.out.println(insidePoints[0].x + " " + insidePoints[0].y + " " + insidePoints[0].z + ",   " + insidePoints[1].x + " " + insidePoints[1].y + " " + insidePoints[1].z);
-            Triangle out1 = new Triangle(inTri.vert1, inTri.vert2, inTri.vert3), out2 = new Triangle(inTri.vert1, inTri.vert2, inTri.vert3);
+            Triangle out1 = new Triangle(new double[]{-1, -1, -1}, new double[]{-1, -1, -1}, new double[]{-1, -1, -1}), out2 = new Triangle(new double[]{-1, -1, -1}, new double[]{-1, -1, -1}, new double[]{-1, -1, -1});
+
+            out1.vertices[0] = insidePoints[0];
+            out1.vertices[1] = insidePoints[1];
             out1.vertices[2] = Matrix.intersectVectors(pPoint, pNorm, insidePoints[0], outsidePoints[0]);
 
-            out2.vertices[0] = inTri.vertices[1];
+            out2.vertices[0] = insidePoints[1];
             out2.vertices[1] = out1.vertices[2];
             out2.vertices[2] = Matrix.intersectVectors(pPoint, pNorm, insidePoints[1], outsidePoints[0]);
 
