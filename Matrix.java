@@ -48,13 +48,13 @@ public class Matrix {
 		output.z = v1.x * v2.y - v1.y * v2.x;
         return(output);
     }
-    public static mPoint intersectVectors(mPoint point, mPoint pNorm, mPoint lineStart, mPoint lineEnd) {
+    public static mPoint intersectVectors(mPoint point, mPoint pNorm, mPoint lineStart, mPoint lineEnd, double[] _t) {
         pNorm = vecNormalise(pNorm);
         double planeD = dotProduct(pNorm, point);
         double ad = dotProduct(lineStart, pNorm);
         double bd = dotProduct(lineEnd, pNorm);
         double t = (planeD - ad) / (bd - ad);
-
+        _t[0] = t;
         mPoint startToEnd = vecSub(lineEnd, lineStart);
         mPoint lineToIntersect = multiply(startToEnd, t);
         return(vecAdd(lineStart, lineToIntersect));
@@ -65,6 +65,8 @@ public class Matrix {
     }
 
     public static mPoint transformPoint(mPoint input) {
+        projMatrix[0][0] = (Main.fAspectRatio * Main.fFovRad);
+        projMatrix[1][1] = (Main.fFovRad);
         double w = input.x * projMatrix[0][3] + input.y * projMatrix[1][3] + input.z * projMatrix[2][3] + projMatrix[3][3];
         if (w == 0) {
             w = 1;

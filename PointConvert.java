@@ -19,6 +19,11 @@ public class PointConvert {
     public PointConvert(mPoint _point) {
         //this(point.x, point.y, point.z);
         this.point = _point;
+        // double tempX = this.point.x, tempY = this.point.y, tempZ = this.point.z;
+        // applyStillRotations(this.point.x, this.point.y, this.point.z);
+        // this.point.x = applyStillRotationsX(tempX, tempY, tempZ);
+        // this.point.y = applyStillRotationsY(tempX, tempY, tempZ);
+        // this.point.z = applyStillRotationsZ(tempX, tempY, tempZ);
         this.point.x -= Main.cam.x;
         //this.point.y *= -1;
         this.point.y -= Main.cam.y;
@@ -53,6 +58,27 @@ public class PointConvert {
         //rotateXAxis(_x, _y, _z, A, B, C);
         //rotateYAxis(_x, _y, _z, A, B, C);
     }
+    public void applyStillRotations(double _x, double _y, double _z) {
+        double A = Math.toRadians(Main.rotX), B = Math.toRadians(Main.rotY), C = Math.toRadians(Main.rotZ);
+        this.point.x = _x*(cos(A)*cos(B) + (-1 * sin(A))*(-1 * sin(B))*(-1 * sin(C))) + _y*cos(C)*(-1 * sin(A)) + _z*(cos(A)*sin(B) + cos(B)*(-1 * sin(A))*(-1 * sin(C)));
+        this.point.y = _x*(sin(A)*cos(B) + cos(A)*(-1 * sin(C))*(-1 * sin(B))) + _y*cos(A)*cos(C) + _z*(sin(A)*sin(B) + cos(A)*(-1 * sin(C))*cos(B));
+        this.point.z = _x*cos(C)*(-1 * sin(B)) + _y*sin(C) + _z*cos(C)*cos(B);
+    }
+    public static double applyStillRotationsX(double _x, double _y, double _z) {
+        double A = Math.toRadians(Main.rotX), B = Math.toRadians(Main.rotY), C = Math.toRadians(Main.rotZ);
+        double temp = _x*(cos(A)*cos(B) + (-1 * sin(A))*(-1 * sin(B))*(-1 * sin(C))) + _y*cos(C)*(-1 * sin(A)) + _z*(cos(A)*sin(B) + cos(B)*(-1 * sin(A))*(-1 * sin(C)));
+        return(temp);
+    }
+    public static double applyStillRotationsY(double _x, double _y, double _z) {
+        double A = Math.toRadians(Main.rotX), B = Math.toRadians(Main.rotY), C = Math.toRadians(Main.rotZ);
+        double temp = _x*(sin(A)*cos(B) + cos(A)*(-1 * sin(C))*(-1 * sin(B))) + _y*cos(A)*cos(C) + _z*(sin(A)*sin(B) + cos(A)*(-1 * sin(C))*cos(B));
+        return(temp);
+    }
+    public static double applyStillRotationsZ(double _x, double _y, double _z) {
+        double B = Math.toRadians(Main.rotY), C = Math.toRadians(Main.rotZ);
+        double temp = _x*cos(C)*(-1 * sin(B)) + _y*sin(C) + _z*cos(C)*cos(B);
+        return(temp);
+    }
     public void applyTransformations() {
         this.x *= (Main.cam.fov * Main.aspectRatio);
         this.y *= (Main.cam.fov);
@@ -73,10 +99,10 @@ public class PointConvert {
         this.y = (_x * sin(A)) + (_y * cos(A));
         this.z = _z;
     }
-    public double sin(double degrees) {
+    public static double sin(double degrees) {
         return(Math.sin(degrees));
     }
-    public double cos(double degrees) {
+    public static double cos(double degrees) {
         return(Math.cos(degrees));
     }
 }

@@ -23,7 +23,7 @@ public class Main extends JPanel implements KeyListener {
     static double fAspectRatio = 1.0 / aspectRatio;
     static double fFovRad = 1.0 / Math.tan(Math.toRadians(fFov * 0.5));
 
-    static Camera cam = new Camera(10, 15, 5, 120, aspectRatio);
+    static Camera cam = new Camera(0, 0, 0, fFov, fAspectRatio);
 
     static ArrayList<ThreeDPolygon> polygons = new ArrayList<ThreeDPolygon>();
 
@@ -31,13 +31,14 @@ public class Main extends JPanel implements KeyListener {
 
     static Mesh mesh = new Mesh();
 
-    static mPoint lightSource = new mPoint(0, 1, 0);
+    static mPoint lightSource = new mPoint(0, 1, 2);
 
     static JFrame frame;
     static long last;
     static int crossHairLength = 7;
 
     static Point lastX, lastY;
+    static double rotX = 0, rotY = 0, rotZ = 0;
 
     public void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D)g;
@@ -59,6 +60,7 @@ public class Main extends JPanel implements KeyListener {
         g.drawString("X: " + Math.round(cam.x*1000)/1000.0, 10, 20);
         g.drawString("Y: " + Math.round(cam.y*1000)/1000.0, 10, 30);
         g.drawString("Z: " + Math.round(cam.z*1000)/1000.0, 10, 40);
+        g.drawString("FOV: " + fFov + " degrees", 10, 60);
 
         g2.setStroke(new BasicStroke(2));
         g.setColor(Color.gray);
@@ -89,8 +91,10 @@ public class Main extends JPanel implements KeyListener {
         }
         catch (AWTException e) {}
 
-
-
+        rotX = 0;
+        rotY = 0;
+        rotZ = 0;
+        fFovRad = 1.0 / Math.tan(Math.toRadians(fFov * 0.5));
         repaint();
     }
 
@@ -132,6 +136,12 @@ public class Main extends JPanel implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_F) {
+            fFov += 5;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_G) {
+            fFov -= 5;
+        }
         if (e.getKeyCode() == KeyEvent.VK_D && !pressed.get("d")) {
             moveX += 1;
             pressed.put("d",true);
@@ -297,28 +307,30 @@ public class Main extends JPanel implements KeyListener {
         */
         Color cubeColor = Color.RED;
         //South
-        // polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 3}, new double[]{0, 1, 3}, new double[]{1, 1, 3}), cubeColor));
-        // polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 3}, new double[]{1, 1, 3}, new double[]{1, 0, 3}), cubeColor));
-        // //East
-        // polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 3}, new double[]{1, 1, 3}, new double[]{1, 1, 4}), cubeColor));
-        // polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 3}, new double[]{1, 1, 4}, new double[]{1, 0, 4}), cubeColor));
-        // //North
-        // polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4}, new double[]{1, 1, 4}, new double[]{0, 1, 4}), cubeColor));
-        // polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4}, new double[]{0, 1, 4}, new double[]{0, 0, 4}), cubeColor));
-        // //West
-        // polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 4}, new double[]{0, 1, 4}, new double[]{0, 1, 3}), cubeColor));
-        // polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 4}, new double[]{0, 1, 3}, new double[]{0, 0, 3}), cubeColor));
-        // //Top
-        // polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 1, 3}, new double[]{0, 1, 4}, new double[]{1, 1, 4}), cubeColor));
-        // polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 1, 3}, new double[]{1, 1, 4}, new double[]{1, 1, 3}), cubeColor));
-        // //Bottom
-        // polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4}, new double[]{0, 0, 4}, new double[]{0, 0, 3}), cubeColor));
-        // polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4}, new double[]{0, 0, 3}, new double[]{1, 0, 3}), cubeColor));
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 3, 1}, new double[]{0, 1, 3, 1}, new double[]{1, 1, 3, 1}, new double[]{0, 1}, new double[]{0, 0}, new double[]{1, 0}), cubeColor));
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 3, 1}, new double[]{1, 1, 3, 1}, new double[]{1, 0, 3, 1}, new double[]{0, 1}, new double[]{1, 0}, new double[]{1, 1}), cubeColor));
+        //East
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 3, 1}, new double[]{1, 1, 3, 1}, new double[]{1, 1, 4, 1}, new double[]{0, 1}, new double[]{0, 0}, new double[]{1, 0}), cubeColor));
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 3, 1}, new double[]{1, 1, 4, 1}, new double[]{1, 0, 4, 1}, new double[]{0, 1}, new double[]{1, 0}, new double[]{1, 1}), cubeColor));
+        //North
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4, 1}, new double[]{1, 1, 4, 1}, new double[]{0, 1, 4, 1}, new double[]{0, 1}, new double[]{0, 0}, new double[]{1, 0}), cubeColor));
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4, 1}, new double[]{0, 1, 4, 1}, new double[]{0, 0, 4, 1}, new double[]{0, 1}, new double[]{1, 0}, new double[]{1, 1}), cubeColor));
+        //West
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 4, 1}, new double[]{0, 1, 4, 1}, new double[]{0, 1, 3, 1}, new double[]{0, 1}, new double[]{0, 0}, new double[]{1, 0}), cubeColor));
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 4, 1}, new double[]{0, 1, 3, 1}, new double[]{0, 0, 3, 1}, new double[]{0, 1}, new double[]{1, 0}, new double[]{1, 1}), cubeColor));
+        //Top
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 1, 3, 1}, new double[]{0, 1, 4, 1}, new double[]{1, 1, 4, 1}, new double[]{0, 1}, new double[]{0, 0}, new double[]{1, 0}), cubeColor));
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 1, 3, 1}, new double[]{1, 1, 4, 1}, new double[]{1, 1, 3, 1}, new double[]{0, 1}, new double[]{1, 0}, new double[]{1, 1}), cubeColor));
+        //Bottom
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4, 1}, new double[]{0, 0, 4, 1}, new double[]{0, 0, 3, 1}, new double[]{0, 1}, new double[]{0, 0}, new double[]{1, 0}), cubeColor));
+        polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4, 1}, new double[]{0, 0, 3, 1}, new double[]{1, 0, 3, 1}, new double[]{0, 1}, new double[]{1, 0}, new double[]{1, 1}), cubeColor));
         
         cubeColor = new Color(200,200,255,255);
         //loadObjectFromFile("icosahedron.obj", cubeColor);
         cubeColor = Color.gray;
-        loadObjectFromFile("terrainAndObj.obj", cubeColor);
+        //loadObjectFromFile("terrainAndObj.obj", cubeColor);
+        cubeColor = Color.RED;
+        //loadObjectFromFile("blenderMonkey.obj", cubeColor);
         last = System.nanoTime();
         doneCreate = true;
     }
@@ -335,14 +347,19 @@ public class Main extends JPanel implements KeyListener {
                 /*if (data.charAt(0) == '#') {
                     fileReader.nextLine();
                 }
-                else */if (data.charAt(0) == 'v' && data.charAt(1) == ' ') {
-                    data = data.substring(data.indexOf(" ") + 1);
-                    v1 = Double.parseDouble(data.substring(0, data.indexOf(" ")));
-                    data = data.substring(data.indexOf(" ") + 1);
-                    v2 = Double.parseDouble(data.substring(0, data.indexOf(" ")));
-                    data = data.substring(data.indexOf(" ") + 1);
-                    v3 = Double.parseDouble(data.substring(0));
-                    verticeList.add(new double[]{v1, v2, v3});
+                else */if (data.charAt(0) == 'v') {
+                    if (data.charAt(1) == ' ') {
+                        data = data.substring(data.indexOf(" ") + 1);
+                        v1 = Double.parseDouble(data.substring(0, data.indexOf(" ")));
+                        data = data.substring(data.indexOf(" ") + 1);
+                        v2 = Double.parseDouble(data.substring(0, data.indexOf(" ")));
+                        data = data.substring(data.indexOf(" ") + 1);
+                        v3 = Double.parseDouble(data.substring(0));
+                        verticeList.add(new double[]{v1, v2, v3});
+                    }
+                    else if (data.charAt(1) == 't') {
+
+                    }
                 }
                 else if (data.charAt(0) == 'f') {
                     if (data.contains("/")) {
@@ -365,7 +382,7 @@ public class Main extends JPanel implements KeyListener {
                         data = data.substring(data.indexOf(" ") + 1);
                         v3 = Double.parseDouble(data.substring(0));
                     }
-                    polygons.add(new ThreeDPolygon(new Triangle(verticeList.get((int)v1), verticeList.get((int)v2), verticeList.get((int)v3)), c));
+                    polygons.add(new ThreeDPolygon(new Triangle(verticeList.get((int)v1), verticeList.get((int)v2), verticeList.get((int)v3), verticeList.get((int)v1), verticeList.get((int)v2), verticeList.get((int)v3)), c));
                 }
             }
             fileReader.close();
