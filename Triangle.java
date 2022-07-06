@@ -13,10 +13,15 @@ public class Triangle {
             this.tex[1] = new vec2d(t2[0], t2[1], t2[2]);
             this.tex[2] = new vec2d(t3[0], t3[1], t3[2]);
         }
-        else { 
+        else if (t1.length == 2){ 
             this.tex[0] = new vec2d(t1[0], t1[1]);
             this.tex[1] = new vec2d(t2[0], t2[1]);
             this.tex[2] = new vec2d(t3[0], t3[1]);
+        }
+        else {
+            this.tex[0] = new vec2d();
+            this.tex[1] = new vec2d();
+            this.tex[2] = new vec2d();
         }
 
         this.vert1 = v1;

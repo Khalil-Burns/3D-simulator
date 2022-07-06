@@ -76,14 +76,6 @@ public class Main extends JPanel implements KeyListener {
 			createBufferStrategy(3);
 			return;
 		}*/
-        if (false) {
-            for (int i = 0; i < height; i++) {
-                for (int j = 0; j < width; j++) {
-                    if (((i * 3) * 2048 + j * 3) < 4194304)
-                        pixels[i * width + j] = vals[(i * 3) * 2048 + j * 3].getRGB();
-                }
-            }
-        }
 		g.drawImage(canvas, 0, 0, canvas.getWidth(), canvas.getHeight(), null);
         for (int i = 0; i < width * height; i++) {
             pixels[i] = Color.WHITE.getRGB();
@@ -367,16 +359,17 @@ public class Main extends JPanel implements KeyListener {
         // polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4, 1}, new double[]{0, 0, 3, 1}, new double[]{1, 0, 3, 1}, new double[]{0, 1, 1}, new double[]{1, 0, 1}, new double[]{1, 1, 1}), cubeColor));
         BufferedImage image;
         try {
-            //image = ImageIO.read(new File("blue.png"));
-			image = ImageIO.read(new File("cottage_diffuse.png"));
+            image = ImageIO.read(new File("cottage_diffuse.png"));
+			//image = ImageIO.read(new File("handgun_C.jpg"));
             vals = new Color[image.getWidth() * image.getHeight()];
             for (int i = 0; i < image.getHeight(); i++) {
                 for (int j = 0; j < image.getWidth(); j++) {
                     vals[i * image.getWidth() + j] = new Color(image.getRGB(j, i));
                 }
             }
-            loadObjectFromFile("lambo.obj", vals, image, false);
+            //loadObjectFromFile("lambo.obj", vals, image, false);
             loadObjectFromFile("cottage_blender.obj", vals, image, true);
+            //loadObjectFromFile("gun.obj", vals, image, true);
 		} catch (IOException e) {
             vals = new Color[0];
 			e.printStackTrace();
@@ -391,14 +384,14 @@ public class Main extends JPanel implements KeyListener {
         ArrayList<double[]> texPos = new ArrayList<double[]>();
         verticeList.add(new double[]{});
         texPos.add(new double[]{});
+        Color[] temp = {Color.BLACK};
         try {
             File obj = new File(fileName);
             Scanner fileReader = new Scanner(obj);
-            int cnt = 0;
             while (fileReader.hasNextLine()) {
                 String data = fileReader.nextLine();
-                double v1, v2, v3;
-                double vt1, vt2, vt3;
+                double v1, v2, v3, v4;
+                double vt1, vt2, vt3, vt4;
                 /*if (data.charAt(0) == '#') {
                     fileReader.nextLine();
                 }
@@ -428,20 +421,53 @@ public class Main extends JPanel implements KeyListener {
                     //if (data.contains("/")) {
                         data = data.substring(data.indexOf(" ") + 1);
                         v1 = Double.parseDouble(data.substring(0, data.indexOf("/")));
-                        //System.out.println(data);
                         data = data.substring(data.indexOf("/") + 1);
-                        //System.out.println(data);
-                        vt1 = Double.parseDouble(data.substring(0, data.indexOf("/")));
+                        if (data.substring(0, data.indexOf("/")).length() > 0) {
+                            vt1 = Double.parseDouble(data.substring(0, data.indexOf("/")));
+                        }
+                        else {
+                            vt1 = 0;
+                        }
 
                         data = data.substring(data.indexOf(" ") + 1);
                         v2 = Double.parseDouble(data.substring(0, data.indexOf("/")));
                         data = data.substring(data.indexOf("/") + 1);
-                        vt2 = Double.parseDouble(data.substring(0, data.indexOf("/")));
+                        if (data.substring(0, data.indexOf("/")).length() > 0) {
+                            vt2 = Double.parseDouble(data.substring(0, data.indexOf("/")));
+                        }
+                        else {
+                            vt2 = 0;
+                        }
 
                         data = data.substring(data.indexOf(" ") + 1);
                         v3 = Double.parseDouble(data.substring(0, data.indexOf("/")));
                         data = data.substring(data.indexOf("/")  +1);
-                        vt3 = Double.parseDouble(data.substring(0, data.indexOf("/")));
+                        if (data.substring(0, data.indexOf("/")).length() > 0) {
+                            vt3 = Double.parseDouble(data.substring(0, data.indexOf("/")));
+                        }
+                        else {
+                            vt3 = -1;
+                        }
+
+                        if (data.indexOf(" ") != -1) {
+                            data = data.substring(data.indexOf(" ") + 1);
+                            v4 = Double.parseDouble(data.substring(0, data.indexOf("/")));
+                            data = data.substring(data.indexOf("/")  +1);
+                            if (data.substring(0, data.indexOf("/")).length() > 0) {
+                                vt4 = Double.parseDouble(data.substring(0, data.indexOf("/")));
+                            }
+                            else {
+                                vt4 = 0;
+                            }
+                            if (vt3 == -1) {
+                                vt3 = 0;
+                                polygons.add(new ThreeDPolygon(new Triangle(verticeList.get((int)v1), verticeList.get((int)v3), verticeList.get((int)v4), texPos.get((int)vt1), texPos.get((int)vt3), texPos.get((int)vt4)), temp, img));
+                                vt3 = -1;
+                            }
+                            else {
+                                polygons.add(new ThreeDPolygon(new Triangle(verticeList.get((int)v1), verticeList.get((int)v3), verticeList.get((int)v4), texPos.get((int)vt1), texPos.get((int)vt3), texPos.get((int)vt4)), c, img));
+                            }
+                        }
                     /*}
                     else {
                         data = data.substring(data.indexOf(" ") + 1);
@@ -453,8 +479,13 @@ public class Main extends JPanel implements KeyListener {
                         data = data.substring(data.indexOf(" ") + 1);
                         v3 = Double.parseDouble(data.substring(0));
                     }*/
-                    polygons.add(new ThreeDPolygon(new Triangle(verticeList.get((int)v1), verticeList.get((int)v2), verticeList.get((int)v3), texPos.get((int)vt1), texPos.get((int)vt2), texPos.get((int)vt3)), c, img));
-                    
+                    if (vt3 == -1) {
+                        vt3 = 0;
+                        polygons.add(new ThreeDPolygon(new Triangle(verticeList.get((int)v1), verticeList.get((int)v2), verticeList.get((int)v3), texPos.get((int)vt1), texPos.get((int)vt2), texPos.get((int)vt3)), temp, img));
+                    }
+                    else {
+                        polygons.add(new ThreeDPolygon(new Triangle(verticeList.get((int)v1), verticeList.get((int)v2), verticeList.get((int)v3), texPos.get((int)vt1), texPos.get((int)vt2), texPos.get((int)vt3)), c, img));
+                    }
                 }
             }
             fileReader.close();
