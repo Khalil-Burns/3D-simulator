@@ -5,7 +5,7 @@ public class PointConvert {
     mPoint point;
 
     public PointConvert(double _x, double _y, double _z) {
-        this(new mPoint(_x, _y, _z));
+        this(new mPoint(_x, _y, _z, 1));
         /*this.x = _x - Main.cam.x;
         this.y = _y - Main.cam.y;
         this.z = _z - Main.cam.z;
@@ -32,7 +32,10 @@ public class PointConvert {
         this.tX = this.x;
         this.tY = this.y;
         this.tZ = this.z;
-        mPoint converted = Matrix.transformPoint(new mPoint(this.x, this.y, this.z));
+        mPoint converted = Matrix.transformPoint(new mPoint(this.x, this.y, this.z, this.point.w));
+        converted.x /= converted.w;
+        converted.y /= converted.w;
+        converted.z /= converted.w;
         this.newX = scaleX(converted.x * 1);
         this.newY = scaleY(converted.y * 1);
         //System.out.println("point: " + newX + " " + newY + " cam: " + Main.cam.x + " " + Main.cam.z);

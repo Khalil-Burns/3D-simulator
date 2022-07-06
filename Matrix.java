@@ -13,9 +13,10 @@ public class Matrix {
             w = 1;
         }
         mPoint output = new mPoint(
-            (input.x * this.matrix[0][0] + input.y * this.matrix[1][0] + input.z * this.matrix[2][0] + this.matrix[3][0]) / (double)w,
-            (input.x * this.matrix[0][1] + input.y * this.matrix[1][1] + input.z * this.matrix[2][1] + this.matrix[3][1]) / (double)w,
-            (input.x * this.matrix[0][2] + input.y * this.matrix[1][2] + input.z * this.matrix[2][2] + this.matrix[3][2]) / (double)w
+            (input.x * this.matrix[0][0] + input.y * this.matrix[1][0] + input.z * this.matrix[2][0] + /*input.w * */this.matrix[3][0])/*/ (double)w*/,
+            (input.x * this.matrix[0][1] + input.y * this.matrix[1][1] + input.z * this.matrix[2][1] + /*input.w * */this.matrix[3][1])/*/ (double)w*/,
+            (input.x * this.matrix[0][2] + input.y * this.matrix[1][2] + input.z * this.matrix[2][2] + /*input.w * */this.matrix[3][2])/*/ (double)w*/,
+            (input.x * this.matrix[0][3] + input.y * this.matrix[1][3] + input.z * this.matrix[2][3] + /*input.w * */this.matrix[3][3])
         );
         return(output);
     }
@@ -72,9 +73,10 @@ public class Matrix {
             w = 1;
         }
         mPoint output = new mPoint(
-            (input.x * projMatrix[0][0] + input.y * projMatrix[1][0] + input.z * projMatrix[2][0] + projMatrix[3][0]) / (double)w,
-            (input.x * projMatrix[0][1] + input.y * projMatrix[1][1] + input.z * projMatrix[2][1] + projMatrix[3][1]) / (double)w,
-            (input.x * projMatrix[0][2] + input.y * projMatrix[1][2] + input.z * projMatrix[2][2] + projMatrix[3][2]) / (double)w
+            (input.x * projMatrix[0][0] + input.y * projMatrix[1][0] + input.z * projMatrix[2][0] + input.w * projMatrix[3][0])/* / (double)w*/,
+            (input.x * projMatrix[0][1] + input.y * projMatrix[1][1] + input.z * projMatrix[2][1] + input.w * projMatrix[3][1])/* / (double)w*/,
+            (input.x * projMatrix[0][2] + input.y * projMatrix[1][2] + input.z * projMatrix[2][2] + input.w * projMatrix[3][2])/* / (double)w*/,
+            (input.x * projMatrix[0][3] + input.y * projMatrix[1][3] + input.z * projMatrix[2][3] + input.w * projMatrix[3][3])
         );
         return(output);
     }

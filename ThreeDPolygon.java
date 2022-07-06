@@ -1,19 +1,16 @@
 import java.awt.*;
 import java.awt.image.BufferedImage;
-/*import java.util.LinkedList;
-import java.util.Queue;*/
-
-import javax.imageio.ImageIO;
-import java.io.*;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class ThreeDPolygon {
 
     PolygonObject newPolygon;
-    Color c;
-    int red, green, blue;
+    //int red, green, blue;
     double[] x;
     double[] y;
     double[] z;
+    double[] w;
     double[] distToCam;
     double avgDistToCam;
     mPoint normal, line1, line2;
@@ -23,33 +20,29 @@ public class ThreeDPolygon {
     boolean created = false;
     vec2d[] tex;
     BufferedImage image;
+    Color[] vals;
 
-    public ThreeDPolygon(double[] _x, double[] _y, double[] _z, Triangle t, Color _c) {
+    public ThreeDPolygon(double[] _x, double[] _y, double[] _z, Triangle t, Color[] _c, BufferedImage imag) {
         this.x = _x;
         this.y = _y;
         this.z = _z;
-        this.c = _c;
-        this.red = this.c.getRed();
-        this.green = this.c.getGreen();
-        this.blue = this.c.getBlue();
+        // this.red = this.c.getRed();
+        // this.green = this.c.getGreen();
+        // this.blue = this.c.getBlue();
         this.tex = t.tex;
         this.distToCam = new double[this.x.length];
-        try {
-			this.image = ImageIO.read(new File("wood.png"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-
+        this.vals = _c;
+        this.image = imag;
         //this.updatePolygon();
     }
-    public ThreeDPolygon(Triangle tri, Color _c) {
+    public ThreeDPolygon(Triangle tri, Color[] _c, BufferedImage imag) {
         this(
             new double[]{tri.vertices[0].x, tri.vertices[1].x, tri.vertices[2].x},
             new double[]{tri.vertices[0].y, tri.vertices[1].y, tri.vertices[2].y},
             new double[]{tri.vertices[0].z, tri.vertices[1].z, tri.vertices[2].z},
             tri,
-            _c
+            _c,
+            imag
         );
     }
 
@@ -63,6 +56,13 @@ public class ThreeDPolygon {
     }
 
     public void updatePolygon(Graphics g) {
+        /*for (int i = 0; i < this.image.getHeight(); i++) {
+            for (int j = 0; j < this.image.getWidth(); j++) {
+                g.setColor(this.vals[i * this.image.getWidth() + j]);
+                g.fillRect(j * 5, i * 5, 5, 5);
+            }
+        }*/
+
         this.avgDistToCam = avgDist();
 
         int[] newX = new int[this.x.length];
@@ -118,65 +118,64 @@ public class ThreeDPolygon {
         // this.normal.y /= this.normalLength;
         // this.normal.z /= this.normalLength;
 
-        //System.out.println("Origin: " + this.origin.x + " " + this.origin.y + " " + this.origin.z + " P1: " + this.x[1] + " " + this.y[1] + " " + this.z[1] + " P2: " + this.x[2] + " " + this.y[2] + " " + this.z[2]);
-        //if (!this.created) {
-            //this.created = true;
-            int newRed = this.red, newGreen = this.green, newBlue = this.blue;
-            //mPoint lightRay = Matrix.vecSub(new mPoint(this.origin.x, this.origin.y, this.origin.z), new mPoint(Main.cam.x, Main.cam.y, Main.cam.z));
-            //mPoint lightRay = Matrix.vecSub(new mPoint(this.origin.x, this.origin.y, this.origin.z), Main.lightSource);
-            //this.colorShade = Matrix.dotProduct(this.normal, lightRay);
-            this.colorShade = Matrix.dotProduct(this.normal, Main.lightSource);
-            //this.colorShade = Matrix.dotProduct(this.normal, new mPoint(Main.cam.x, Main.cam.y, Main.cam.z));
-            //System.out.println(this.colorShade);
-            this.colorShade -= 1;
-            newRed += this.colorShade * 80;
-            newGreen += this.colorShade * 80;
-            newBlue += this.colorShade * 80;
+        // System.out.println("Origin: " + this.origin.x + " " + this.origin.y + " " + this.origin.z + " P1: " + this.x[1] + " " + this.y[1] + " " + this.z[1] + " P2: " + this.x[2] + " " + this.y[2] + " " + this.z[2]);
+        // //if (!this.created) {
+        // //this.created = true;
+        // int newRed = this.red, newGreen = this.green, newBlue = this.blue;
+        // //mPoint lightRay = Matrix.vecSub(new mPoint(this.origin.x, this.origin.y, this.origin.z), new mPoint(Main.cam.x, Main.cam.y, Main.cam.z));
+        // //mPoint lightRay = Matrix.vecSub(new mPoint(this.origin.x, this.origin.y, this.origin.z), Main.lightSource);
+        // //this.colorShade = Matrix.dotProduct(this.normal, lightRay);
+        this.colorShade = Matrix.dotProduct(this.normal, Main.lightSource);
+        // //this.colorShade = Matrix.dotProduct(this.normal, new mPoint(Main.cam.x, Main.cam.y, Main.cam.z));
+        // //System.out.println(this.colorShade);
+        // this.colorShade -= 1;
+        // newRed += this.colorShade * 80;
+        // newGreen += this.colorShade * 80;
+        // newBlue += this.colorShade * 80;
 
-            if (newRed > 255) {
-                newRed = 255;
-            }
-            if (newRed < 0) {
-                newRed = 0;
-            }
+        // if (newRed > 255) {
+        //     newRed = 255;
+        // }
+        // if (newRed < 0) {
+        //     newRed = 0;
+        // }
 
-            if (newGreen > 255) {
-                newGreen = 255;
-            }
-            if (newGreen < 0) {
-                newGreen = 0;
-            }
+        // if (newGreen > 255) {
+        //     newGreen = 255;
+        // }
+        // if (newGreen < 0) {
+        //     newGreen = 0;
+        // }
 
-            if (newBlue > 255) {
-                newBlue = 255;
-            }
-            if (newBlue < 0) {
-                newBlue = 0;
-            }
-            //System.out.println(this.colorShade + " " + this.red + " " + this.green + " " + this.blue);
-            c = new Color(newRed, newGreen, newBlue, c.getAlpha());
-        //}
-
-        //this.newPolygon = new PolygonObject(newX, newY, this.c);
-        //this.newPolygon.drawPolygon(g);
+        // if (newBlue > 255) {
+        //     newBlue = 255;
+        // }
+        // if (newBlue < 0) {
+        //     newBlue = 0;
+        // }
+        // c = new Color(newRed, newGreen, newBlue, c.getAlpha());
         
         Triangle[] clipped = clip(new mPoint(0, 0, 0.1), new mPoint(0, 0, 1), new Triangle(
             new double[]{transformX[0], transformY[0], transformZ[0]},
             new double[]{transformX[1], transformY[1], transformZ[1]}, 
             new double[]{transformX[2], transformY[2], transformZ[2]},
-            new double[]{this.tex[0].u, this.tex[0].v},
-            new double[]{this.tex[1].u, this.tex[1].v},
-            new double[]{this.tex[2].u, this.tex[2].v}
+            new double[]{this.tex[0].u, this.tex[0].v, this.tex[0].w},
+            new double[]{this.tex[1].u, this.tex[1].v, this.tex[1].w},
+            new double[]{this.tex[2].u, this.tex[2].v, this.tex[2].w}
         ));
-        //System.out.println(clipped.length);
         mPoint camRay = Matrix.vecSub(new mPoint(this.origin.x, this.origin.y, this.origin.z), new mPoint(Main.cam.x, Main.cam.y, Main.cam.z));
         double[] tempX = new double[3], tempY = new double[3], tempZ = new double[3];
         double[] newV1 = new double[3], newV2 = new double[3], newV3 = new double[3];
         if (Matrix.dotProduct(this.normal, camRay) < 0) {
             for (int i = 0; i < clipped.length; i++) {
                 int[] newXPoints = new int[3], newYPoints = new int[3];
+                vec2d[] newTex = new vec2d[3];
                 for (int j = 0; j < 3; j++) {
                     mPoint newNewPoint = Matrix.transformPoint(clipped[i].vertices[j]);
+                    newNewPoint.x /= newNewPoint.w;
+                    newNewPoint.y /= newNewPoint.w;
+                    newNewPoint.z /= newNewPoint.w;
+                    newTex[j] = new vec2d((clipped[i].tex[j].u / newNewPoint.w), (clipped[i].tex[j].v / newNewPoint.w), (1.0 / newNewPoint.w));
                     tempX[j] = newNewPoint.x;
                     tempY[j] = newNewPoint.y;
                     tempZ[i] = newNewPoint.z;
@@ -199,19 +198,19 @@ public class ThreeDPolygon {
                             newV3[2] = newNewPoint.z;
                             break;
                     }
-                    //System.out.println(newX[j] + " " + newY[j] + " " + clipped.length + c.toString());
                 }
+
                 boolean crossHairTouching = pointInsideTri((Main.width / 2), (Main.height / 2), newXPoints[0], newYPoints[0], newXPoints[1], newYPoints[1], newXPoints[2], newYPoints[2]);
                 //System.out.println(" " + crossHairTouching);
                 //System.out.println("V1: " + newXPoints[0] + ", " + newYPoints[0] + ", V2: " + newXPoints[1] + ", " + newYPoints[1] + ", V3: " + newXPoints[2] + ", " + newYPoints[2] + ", " + i);
-                PolygonObject newNewPolygon = new PolygonObject(newXPoints, newYPoints, this.c);
+            //PolygonObject newNewPolygon = new PolygonObject(newXPoints, newYPoints, this.vals, this.c);
                 //newNewPolygon.drawPolygon(g, crossHairTouching/*, tempX, tempY, tempZ*/);
-                newNewPolygon.texturedTriangle(g, this.image, newXPoints[0], newYPoints[0], this.tex[0].u, this.tex[0].v, newXPoints[1], newYPoints[1], this.tex[1].u, this.tex[0].v, newXPoints[2], newYPoints[2], this.tex[2].u, this.tex[0].v);
+            //newNewPolygon.texturedTriangle(g, this.image, newXPoints[0], newYPoints[0], newTex[0].u, newTex[0].v, newTex[0].w, newXPoints[1], newYPoints[1], newTex[1].u, newTex[1].v, newTex[1].w, newXPoints[2], newYPoints[2], newTex[2].u, newTex[2].v, newTex[2].w);
+            //newNewPolygon.drawPolygon(g, false);
 
-
-                /*  this currently does not work, and doesn't seem to have a large effect
+                /*  this currently does not work, and doesn't seem to have a large effect*/
                 Queue<Triangle> listTris = new LinkedList<Triangle>();
-                listTris.add(new Triangle(newV1, newV2, newV3));
+                listTris.add(new Triangle(newV1, newV2, newV3, newTex));
                 int nNewTris = 1;
                 for (int p = 0; p < 4; p++) {
                     int nTrisToAdd = 0;
@@ -224,29 +223,54 @@ public class ThreeDPolygon {
                                 reClipped = clip(new mPoint(0, 0, 0), new mPoint(0, 1, 0), temp);
                                 break;
                             case 1:
-                                reClipped = clip(new mPoint(0, Main.height - 1.0, 0), new mPoint(0, -1, 0), temp);
+                                reClipped = clip(new mPoint(0, Main.height - 1, 0), new mPoint(0, -1, 0), temp);
                                 break;
                             case 2:
                                 reClipped = clip(new mPoint(0, 0, 0), new mPoint(1, 0, 0), temp);
                                 break;
                             default:
-                                reClipped = clip(new mPoint(Main.width - 1.0, 0, 0), new mPoint(-1, 0, 0), temp);
+                                reClipped = clip(new mPoint(Main.width - 1, 0, 0), new mPoint(-1, 0, 0), temp);
                                 break;
                         }
                         nTrisToAdd = reClipped.length;
-                        
                         for (int w = 0; w < nTrisToAdd; w++) {
                             listTris.add(reClipped[w]);
+                            /*g.drawString(
+                                PolygonObject.round(reClipped[w].vertices[0].x) + "   " + PolygonObject.round(reClipped[w].vertices[0].y) + "   " + PolygonObject.round(reClipped[w].vertices[0].z) + ",   " + 
+                                PolygonObject.round(reClipped[w].vertices[1].x) + "   " + PolygonObject.round(reClipped[w].vertices[1].y) + "   " + PolygonObject.round(reClipped[w].vertices[1].z) + ",   " + 
+                                PolygonObject.round(reClipped[w].vertices[2].x) + "   " + PolygonObject.round(reClipped[w].vertices[2].y) + "   " + PolygonObject.round(reClipped[w].vertices[2].z), 10, 120 + 20 * w
+                            );*/
                         }
                     }
                     nNewTris = listTris.size();
                 }
-                for (int h = 0; h < listTris.size(); h++) {
+                int listSize = listTris.size();
+                for (int h = 0; h < listSize; h++) {
                     Triangle newTemp = listTris.remove();
+                    for (int r = 0; r < 3; r++) {
+                        newTex[r].u = newTemp.tex[r].u;
+                        newTex[r].v = newTemp.tex[r].v;
+                        newTex[r].w = newTemp.tex[r].w;
+                        switch(r) {
+                            case 0:
+                                newXPoints[0] = (int)newTemp.vertices[r].x;
+                                newYPoints[0] = (int)newTemp.vertices[r].y;
+                                break;
+                            case 1:
+                                newXPoints[1] = (int)newTemp.vertices[r].x;
+                                newYPoints[1] = (int)newTemp.vertices[r].y;
+                                break;
+                            case 2:
+                                newXPoints[2] = (int)newTemp.vertices[r].x;
+                                newYPoints[2] = (int)newTemp.vertices[r].y;
+                                break;
+                        }
+                    }
 
-                    PolygonObject newNewPolygon = new PolygonObject(new int[]{(int)newTemp.vertices[0].x, (int)newTemp.vertices[1].x, (int)newTemp.vertices[2].x}, new int[]{(int)newTemp.vertices[0].y, (int)newTemp.vertices[1].y, (int)newTemp.vertices[2].y}, this.c);
-                    newNewPolygon.drawPolygon(g, tempX, tempY, tempZ);
-                }*/
+                    PolygonObject newNewPolygon = new PolygonObject(new int[]{(int)newTemp.vertices[0].x, (int)newTemp.vertices[1].x, (int)newTemp.vertices[2].x}, new int[]{(int)newTemp.vertices[0].y, (int)newTemp.vertices[1].y, (int)newTemp.vertices[2].y}, this.vals, this.colorShade, this.image);
+                    newNewPolygon.texturedTriangle(g, newXPoints[0], newYPoints[0], newTex[0].u, newTex[0].v, newTex[0].w, newXPoints[1], newYPoints[1], newTex[1].u, newTex[1].v, newTex[1].w, newXPoints[2], newYPoints[2], newTex[2].u, newTex[2].v, newTex[2].w);
+                    //newNewPolygon.drawPolygon(g, crossHairTouching);
+                }
             }
         }
     }
@@ -305,7 +329,7 @@ public class ThreeDPolygon {
         }
         if (nInsidePoints == 1 && nOutsidePoints == 2) {
             //System.out.println("one inside");
-            Triangle out = new Triangle(new double[]{-1, -1, -1}, new double[]{-1, -1, -1}, new double[]{-1, -1, -1}, new double[]{-1, -1}, new double[]{-1, -1}, new double[]{-1, -1});
+            Triangle out = new Triangle(new double[]{-1, -1, -1}, new double[]{-1, -1, -1}, new double[]{-1, -1, -1}, new double[]{-1, -1, -1}, new double[]{-1, -1, -1}, new double[]{-1, -1, -1});
             
             double[] tVals = new double[1];
             out.vertices[0] = insidePoints[0];
@@ -314,10 +338,12 @@ public class ThreeDPolygon {
             out.vertices[1] = Matrix.intersectVectors(pPoint, pNorm, insidePoints[0], outsidePoints[0], tVals);
             out.tex[1].u = tVals[0] * (outsideTex[0].u - insideTex[0].u) + insideTex[0].u;
             out.tex[1].v = tVals[0] * (outsideTex[0].v - insideTex[0].v) + insideTex[0].v;
+            out.tex[1].w = tVals[0] * (outsideTex[0].w - insideTex[0].w) + insideTex[0].w;
 
             out.vertices[2] = Matrix.intersectVectors(pPoint, pNorm, insidePoints[0], outsidePoints[1], tVals);
             out.tex[2].u = tVals[0] * (outsideTex[1].u - insideTex[0].u) + insideTex[0].u;
             out.tex[2].v = tVals[0] * (outsideTex[1].v - insideTex[0].v) + insideTex[0].v;
+            out.tex[2].w = tVals[0] * (outsideTex[1].w - insideTex[0].w) + insideTex[0].w;
 
             //this.distToCam[idxOfOutside[0]] = out.vertices[1].x * out.vertices[1].x + out.vertices[1].y * out.vertices[1].y + out.vertices[1].z * out.vertices[1].z;
             //this.distToCam[idxOfOutside[1]] = out.vertices[2].x * out.vertices[2].x + out.vertices[2].y * out.vertices[2].y + out.vertices[2].z * out.vertices[2].z;
@@ -325,24 +351,26 @@ public class ThreeDPolygon {
         }
         if (nInsidePoints == 2 && nOutsidePoints == 1) {
             //System.out.println(insidePoints[0].x + " " + insidePoints[0].y + " " + insidePoints[0].z + ",   " + insidePoints[1].x + " " + insidePoints[1].y + " " + insidePoints[1].z);
-            Triangle out1 = new Triangle(new double[]{-1, -1, -1}, new double[]{-1, -1, -1}, new double[]{-1, -1, -1}, new double[]{-1, -1}, new double[]{-1, -1}, new double[]{-1, -1}), out2 =new Triangle(new double[]{-1, -1, -1}, new double[]{-1, -1, -1}, new double[]{-1, -1, -1}, new double[]{-1, -1}, new double[]{-1, -1}, new double[]{-1, -1});
+            Triangle out1 = new Triangle(new double[]{-1, -1, -1}, new double[]{-1, -1, -1}, new double[]{-1, -1, -1}, new double[]{-1, -1, -1}, new double[]{-1, -1, -1}, new double[]{-1, -1, -1}), out2 = new Triangle(new double[]{-1, -1, -1}, new double[]{-1, -1, -1}, new double[]{-1, -1, -1}, new double[]{-1, -1, -1}, new double[]{-1, -1, -1}, new double[]{-1, -1, -1});
 
             double[] tVals = new double[1];
             out1.vertices[0] = insidePoints[0];
             out1.tex[0] = insideTex[0];
             out1.vertices[1] = insidePoints[1];
-            out1.tex[0] = insideTex[1];
+            out1.tex[1] = insideTex[1];
             out1.vertices[2] = Matrix.intersectVectors(pPoint, pNorm, insidePoints[0], outsidePoints[0], tVals);
-            out1.tex[1].u = tVals[0] * (outsideTex[0].u - insideTex[0].u) + insideTex[0].u;
-            out1.tex[1].v = tVals[0] * (outsideTex[0].v - insideTex[0].v) + insideTex[0].v;
+            out1.tex[2].u = tVals[0] * (outsideTex[0].u - insideTex[0].u) + insideTex[0].u;
+            out1.tex[2].v = tVals[0] * (outsideTex[0].v - insideTex[0].v) + insideTex[0].v;
+            out1.tex[2].w = tVals[0] * (outsideTex[0].w - insideTex[0].w) + insideTex[0].w;
             
             out2.vertices[0] = insidePoints[1];
             out2.tex[0] = insideTex[1];
             out2.vertices[1] = out1.vertices[2];
             out2.tex[1] = out1.tex[2];
             out2.vertices[2] = Matrix.intersectVectors(pPoint, pNorm, insidePoints[1], outsidePoints[0], tVals);
-            out2.tex[1].u = tVals[0] * (outsideTex[0].u - insideTex[1].u) + insideTex[1].u;
-            out2.tex[1].v = tVals[0] * (outsideTex[0].v - insideTex[1].v) + insideTex[1].v;
+            out2.tex[2].u = tVals[0] * (outsideTex[0].u - insideTex[1].u) + insideTex[1].u;
+            out2.tex[2].v = tVals[0] * (outsideTex[0].v - insideTex[1].v) + insideTex[1].v;
+            out2.tex[2].w = tVals[0] * (outsideTex[0].w - insideTex[1].w) + insideTex[1].w;
 
             // System.out.println(out1.vertices[0].x + " " + out1.vertices[0].y + " " + out1.vertices[0].z);
             // System.out.println(out1.vertices[1].x + " " + out1.vertices[1].y + " " + out1.vertices[1].z);
@@ -353,7 +381,7 @@ public class ThreeDPolygon {
             //double temp1 = out1.vertices[2].x * out1.vertices[2].x + out1.vertices[2].y * out1.vertices[2].y + out1.vertices[2].z * out1.vertices[2].z;
             //double temp2 = out2.vertices[2].x * out2.vertices[2].x + out2.vertices[2].y * out2.vertices[2].y + out2.vertices[2].z * out2.vertices[2].z;
             //this.distToCam[idxOfOutside[0]] = temp1 + temp2 / 2.0;
-            return(new Triangle[]{out1, out2});
+        return(new Triangle[]{out1, out2});
         }
         return(new Triangle[]{});
     }
