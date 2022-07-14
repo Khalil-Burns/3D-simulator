@@ -19,10 +19,10 @@ public class ThreeDPolygon {
     double colorShade;
     boolean created = false;
     vec2d[] tex;
-    BufferedImage image;
-    Color[] vals;
+    BufferedImage image[];
+    Color[][] vals;
 
-    public ThreeDPolygon(double[] _x, double[] _y, double[] _z, Triangle t, Color[] _c, BufferedImage imag) {
+    public ThreeDPolygon(double[] _x, double[] _y, double[] _z, Triangle t, Color[][] _c, BufferedImage imag[]) {
         this.x = _x;
         this.y = _y;
         this.z = _z;
@@ -35,7 +35,7 @@ public class ThreeDPolygon {
         this.image = imag;
         //this.updatePolygon();
     }
-    public ThreeDPolygon(Triangle tri, Color[] _c, BufferedImage imag) {
+    public ThreeDPolygon(Triangle tri, Color[][] _c, BufferedImage imag[]) {
         this(
             new double[]{tri.vertices[0].x, tri.vertices[1].x, tri.vertices[2].x},
             new double[]{tri.vertices[0].y, tri.vertices[1].y, tri.vertices[2].y},
@@ -126,6 +126,7 @@ public class ThreeDPolygon {
         // //mPoint lightRay = Matrix.vecSub(new mPoint(this.origin.x, this.origin.y, this.origin.z), Main.lightSource);
         // //this.colorShade = Matrix.dotProduct(this.normal, lightRay);
         this.colorShade = Matrix.dotProduct(this.normal, Main.lightSource);
+        this.colorShade -= 1;
         // //this.colorShade = Matrix.dotProduct(this.normal, new mPoint(Main.cam.x, Main.cam.y, Main.cam.z));
         // //System.out.println(this.colorShade);
         // this.colorShade -= 1;
@@ -179,7 +180,7 @@ public class ThreeDPolygon {
                     tempX[j] = newNewPoint.x;
                     tempY[j] = newNewPoint.y;
                     tempZ[i] = newNewPoint.z;
-                    newXPoints[j] = PointConvert.scaleX(newNewPoint.x);
+                    newXPoints[j] = PointConvert.scaleX(-newNewPoint.x);
                     newYPoints[j] = PointConvert.scaleY(-newNewPoint.y);
                     switch(j) {
                         case 0:
@@ -266,15 +267,17 @@ public class ThreeDPolygon {
                                 break;
                         }
                     }
-
-                    PolygonObject newNewPolygon = new PolygonObject(new int[]{(int)newTemp.vertices[0].x, (int)newTemp.vertices[1].x, (int)newTemp.vertices[2].x}, new int[]{(int)newTemp.vertices[0].y, (int)newTemp.vertices[1].y, (int)newTemp.vertices[2].y}, this.vals, this.colorShade, this.image);
+                    PolygonObject newNewPolygon = new PolygonObject(new int[]{newXPoints[0], newXPoints[1], newXPoints[2]}, new int[]{newYPoints[0], newYPoints[1], newYPoints[2]}, this.vals, this.colorShade, this.image);
                     newNewPolygon.texturedTriangle(g, newXPoints[0], newYPoints[0], newTex[0].u, newTex[0].v, newTex[0].w, newXPoints[1], newYPoints[1], newTex[1].u, newTex[1].v, newTex[1].w, newXPoints[2], newYPoints[2], newTex[2].u, newTex[2].v, newTex[2].w);
-                    //newNewPolygon.drawPolygon(g, crossHairTouching);
+                    //newNewPolygon.drawPolygon(g, false);
                 }
             }
         }
     }
 
+    /* 
+     *  HUGE SHOUTOUT to Javidx9 for his video on clippings. This funciton and the intersectVector function was referenced from his video: https://www.youtube.com/watch?v=HXSuNxpCzdM
+     */
     public Triangle[] clip(mPoint pPoint, mPoint pNorm, Triangle inTri) {
         pNorm = Matrix.vecNormalise(pNorm);
 

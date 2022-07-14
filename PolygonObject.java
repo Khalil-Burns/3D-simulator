@@ -6,12 +6,13 @@ public class PolygonObject {
     Polygon p;
     double shade;
     double colChange = 30;
-    Color[] cVals;
+    Color[][] cVals;
     int[] xPoints;
     int[] yPoints;
-    BufferedImage img;
+    BufferedImage img[];
+    int cnt = 0;
 
-    public PolygonObject(int[] x, int[] y, Color[] vals, double _shade, BufferedImage imag) {
+    public PolygonObject(int[] x, int[] y, Color[][] vals, double _shade, BufferedImage imag[]) {
         this.p = new Polygon();
         this.p.xpoints = x;
         this.p.ypoints = y;
@@ -22,8 +23,12 @@ public class PolygonObject {
 
         this.xPoints = x;
         this.yPoints = y;
+        cnt = 0;
     }
 
+    /*
+     * HUGE SHOUTOUT to Javidx9 for his video on textures. This function was referenced from his video: https://www.youtube.com/watch?v=nBzCS-Y0FcY
+     */
     public void texturedTriangle(Graphics g, int x1, int y1, double u1, double v1, double w1, int x2, int y2, double u2, double v2, double w2, int x3, int y3, double u3, double v3, double w3) {
         int temp;
         double dTemp;
@@ -159,13 +164,30 @@ public class PolygonObject {
                 texW = texSW;
 
                 double tStep = 1.0 / ((double)(bx - ax));
+                //System.out.println(tStep * this.img[0].getWidth());
                 double t = 0;
+                cnt = 0;
                 for (int j = ax; j < bx; j++) {
                     if (i * Main.width + j >= 0 && i * Main.width + j < (Main.width * Main.height)) {
                         texU = (1.0 - t) * (double)texSU + t * (double)texEU;
                         texV = (1.0 - t) * (double)texSV + t * (double)texEV;
                         texW = (1.0 - t) * (double)texSW + t * (double)texEW;
-                        draw(i, j, texU, texV, texW);
+                        if (cnt++ == 0 && (i - y1) == 12) {
+                            //System.out.println((Math.sqrt((this.img[0].getWidth() * (((texEU - texSU) * (texEU - texSU)) / ((texEW - texSW) * (texEW - texSW)))) + (this.img[0].getHeight() * (((texEV - texSV) * (texEV - texSV)) / ((texEW - texSW) * (texEW - texSW))))) / (ax - bx)));
+                            //System.out.println(((tStep * this.img[0].getWidth()) / (double)(bx - ax)));
+                            //System.out.println("U: " + texSU + " " + texEU + "V: " + texSV + " " + texEV + "W: " + texSW + " " + texEW);
+                            //System.out.println(((texEU * this.img[0].getWidth() - texSU * this.img[0].getWidth())) + " " + ((bx - ax)) + " " + ((((texEU * this.img[0].getWidth() - texSU * this.img[0].getWidth()))) / ((bx - ax))));
+                            //System.out.println(((bx - ax) / texEU) + " ");
+                            //System.out.println(((texEU * this.img[0].getWidth() - texSU * this.img[0].getWidth())) + " " + ((bx - ax)) + " " + (((texEU * this.img[0].getWidth() - texSU * this.img[0].getWidth())) / ((bx - ax))));
+                            //break;
+                        }
+                        double step = (tStep * this.img[0].getWidth());
+                        step = ((((texEV/texEW) * this.img[0].getWidth() - (texSV/texSW) * this.img[0].getWidth())) / ((bx - ax)));
+                        step = (Math.sqrt((this.img[0].getWidth() * ((texEU/texEW) - (texSU/texSW))) * (this.img[0].getWidth() * ((texEU/texEW) - (texSU/texSW))) + (this.img[0].getHeight() * ((texEV/texEW) - (texSV/texSW))) * (this.img[0].getHeight() * ((texEV/texEW) - (texSV/texSW))))) / (bx - ax);
+                        //step = (Math.sqrt((this.img[0].getWidth() * (((texEU - texSU) * (texEU - texSU)) / ((texEW - texSW) * (texEW - texSW)))) + (this.img[0].getHeight() * (((texEV - texSV) * (texEV - texSV)) / ((texEW - texSW) * (texEW - texSW)))))) / (ax - bx);
+                        //step = (Math.sqrt((this.img[0].getWidth() * (((texEU) - (texSU)) / ((texEW) - (texSW)))) * (this.img[0].getWidth() * (((texEU) - (texSU)) / ((texEW) - (texSW)))) + (this.img[0].getHeight() * (((texEV) - (texSV)) / ((texEW) - (texSW)))) * (this.img[0].getHeight() * (((texEV) - (texSV)) / ((texEW) - (texSW)))))) / (bx - ax);
+                        //step = (Math.sqrt((this.img[0].getWidth() * ((texEU) - (texSU))) * (this.img[0].getWidth() * ((texEU) - (texSU))) + (this.img[0].getHeight() * ((texEV) - (texSV))) * (this.img[0].getHeight() * ((texEV) - (texSV))) + (((texEW) - (texSW))) * (((texEW) - (texSW))))) / (bx - ax);
+                        draw(i, j, texU, texV, texW, step);
                         t += tStep;
                     }
                 }
@@ -238,20 +260,81 @@ public class PolygonObject {
                     texU = (1.0 - t) * texSU + t * texEU;
                     texV = (1.0 - t) * texSV + t * texEV;
                     texW = (1.0 - t) * texSW + t * texEW;
-                    draw(i, j, texU, texV, texW);
+                    double step = (tStep * this.img[0].getWidth());
+                    step = ((((texEV/texEW) * this.img[0].getWidth() - (texSV/texSW) * this.img[0].getWidth())) / ((bx - ax)));
+                    step = (Math.sqrt((this.img[0].getWidth() * ((texEU/texEW) - (texSU/texSW))) * (this.img[0].getWidth() * ((texEU/texEW) - (texSU/texSW))) + (this.img[0].getHeight() * ((texEV/texEW) - (texSV/texSW))) * (this.img[0].getHeight() * ((texEV/texEW) - (texSV/texSW))))) / (bx - ax);
+                    //step = (Math.sqrt((this.img[0].getWidth() * (((texEU - texSU) * (texEU - texSU)) / ((texEW - texSW) * (texEW - texSW)))) + (this.img[0].getHeight() * (((texEV - texSV) * (texEV - texSV)) / ((texEW - texSW) * (texEW - texSW)))))) / (ax - bx);
+                    //step = (Math.sqrt((this.img[0].getWidth() * (((texEU) - (texSU)) / ((texEW) - (texSW)))) * (this.img[0].getWidth() * (((texEU) - (texSU)) / ((texEW) - (texSW)))) + (this.img[0].getHeight() * (((texEV) - (texSV)) / ((texEW) - (texSW)))) * (this.img[0].getHeight() * (((texEV) - (texSV)) / ((texEW) - (texSW)))))) / (bx - ax);
+                    //step = (Math.sqrt((this.img[0].getWidth() * ((texEU) - (texSU))) * (this.img[0].getWidth() * ((texEU) - (texSU))) + (this.img[0].getHeight() * ((texEV) - (texSV))) * (this.img[0].getHeight() * ((texEV) - (texSV))) + (((texEW) - (texSW))) * (((texEW) - (texSW))))) / (bx - ax);
+                    draw(i, j, texU, texV, texW, step);
                     t += tStep;
                 }
             }
         }
     }
 
-    public void draw(int i, int j, double u, double v, double w) {
-        int idxU = (int)((u/w) * this.img.getWidth()), idxV = (int)((v/w) * this.img.getHeight());
-        if (idxU >= 0 && idxU < this.img.getWidth() && idxV >= 0 && idxV < this.img.getHeight()) {
+    public void draw(int i, int j, double u, double v, double w, double step) {
+        //double expI = (Math.log(step) / Math.log(2));
+        double expI = step;
+        int tempI = (int)expI;
+        double cUsed = 1.0 - (double)(expI - (double)tempI);
+        //int tempI = (int)(10 * (Math.log(w) + 3));
+        if (tempI >= this.img.length) {
+            tempI = this.img.length - 2;
+            expI = tempI + 1;
+        }
+        else if (tempI >= this.img.length - 1) {
+            tempI = this.img.length - 2;
+            expI = tempI + 1;
+        }
+        if (tempI < 0) {
+            tempI = 0;
+            expI = 1;
+        }
+        //int width = this.img[tempI].getWidth(), height = this.img[tempI].getHeight();
+        //int width = this.img[tempI < 3? 0:(tempI - 3)].getWidth(), height = this.img[tempI < 3? 0:(tempI - 3)].getHeight();
+        int width = this.img[0].getWidth(), height = this.img[0].getHeight();
+        int idxU = (int)((u/w) * width), idxV = (int)((v/w) * height);
+        if (idxU >= 0 && idxU < width && idxV >= 0 && idxV < height) {
             if (Main.depthBuffer[i * Main.width + j] < w) {
                 //System.out.println((idxV * this.img.getWidth() + idxU) + " " + this.cVals[idxV * this.img.getWidth() + idxU]);
-                Color c = this.cVals[idxV * this.img.getWidth() + idxU];
+                //Color c = this.cVals[idxV * this.img.getWidth() + idxU];
+                //Color c = Main.disVals[tempI];
+
+                Color c = this.cVals[0][idxV * width + idxU];
                 int newRed = c.getRed(), newGreen = c.getGreen(), newBlue = c.getBlue();
+
+                int power = 1;
+                for (int k = 1; k < this.cVals.length; k++) {
+                    power *= 2;
+                    c = this.cVals[k][(idxV/power) * (width/power) + (idxU/power)];
+                    newRed += c.getRed(); newGreen += c.getGreen(); newBlue += c.getBlue();
+                }
+
+                newRed /= this.cVals.length; newGreen /= this.cVals.length; newBlue /= this.cVals.length;
+
+                // //cUsed = 1.0;
+                // //Color c = this.cVals[tempI][idxV * width + idxU];
+                // Color c = Main.disVals[tempI];
+                // int newRed = (int)(c.getRed() * cUsed), newGreen = (int)(c.getGreen() * cUsed), newBlue = (int)(c.getBlue() * cUsed);
+                // //c = this.cVals[tempI + 1][(idxV/2) * (width/2) + (idxU/2)];
+                // //c = Main.disVals[tempI];
+                // c = Main.disVals[tempI + 1];
+                // cUsed = 1.0 - cUsed;
+                // //cUsed = 1.0;
+                // newRed += (int)(c.getRed() * cUsed); newGreen += (int)(c.getGreen() * cUsed); newBlue += (int)(c.getBlue() * cUsed);
+                // //newRed /= 2; newGreen /= 2; newBlue /= 2;
+
+                // Color c = this.cVals[tempI < 3? 0:(tempI - 3)][idxV * width + idxU];
+                // int newRed = c.getRed(), newGreen = c.getGreen(), newBlue = c.getBlue();
+                // int power = 1;
+                // for (int k = 1; k < tempI + 1; k++) {
+                //     power *= 2;
+                //     c = this.cVals[k][(idxV/power) * (width/power) + (idxU/power)];
+                //     newRed += c.getRed(); newGreen += c.getGreen(); newBlue += c.getBlue();
+                // }
+                // newRed /= tempI + 1; newGreen /= tempI + 1; newBlue /= tempI + 1;
+
                 newRed += this.shade * this.colChange;
                 newGreen += this.shade * this.colChange;
                 newBlue += this.shade * this.colChange;
@@ -281,13 +364,18 @@ public class PolygonObject {
                 Main.depthBuffer[i * Main.width + j] = w;
             }
         }
+        else {
+            Color c = this.cVals[9][0];
+            Main.pixels[i * Main.width + j] = c.getRGB();
+        }
     }
 
     public void drawPolygon(Graphics g, boolean crossHair/*, double[] x, double[] y, double[] z*/) {
-        Graphics2D g2 = (Graphics2D)g;
-        g2.setStroke(new BasicStroke(3));
-        g.setColor(Color.BLACK);
+        //Graphics2D g2 = (Graphics2D)g;
+        //g2.setStroke(new BasicStroke(3));
+        g.setColor(this.cVals[9][0]);
         g.drawPolygon(this.p);
+        g.fillPolygon(this.p);
     }
     public static double round(double x) {
         return(Math.round(x * 1000)/1000.0);

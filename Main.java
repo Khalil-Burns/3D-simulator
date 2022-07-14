@@ -14,12 +14,12 @@ public class Main extends JPanel implements KeyListener {
     static boolean doneCreate = false;
 
     double moveX = 0, moveY = 0, moveZ = 0;
-    double speedX = 0.1, speedY = 0.1, speedZ = 0.1;
+    double speedX = 0.5, speedY = 0.5, speedZ = 0.5;
     static HashMap<String, Boolean> pressed = new HashMap<String, Boolean>();
 
     static int width = (int)Toolkit.getDefaultToolkit().getScreenSize().getWidth(), height = (int)Toolkit.getDefaultToolkit().getScreenSize().getHeight();
     static double aspectRatio = (width*1.0)/height;
-    static double rotationX = -6, rotationY = 25;
+    static double rotationX = -180, rotationY = -10;
 
     static double fNear = 0.1;
     static double fFar = 1000.0;
@@ -27,7 +27,7 @@ public class Main extends JPanel implements KeyListener {
     static double fAspectRatio = 1.0 / aspectRatio;
     static double fFovRad = 1.0 / Math.tan(Math.toRadians(fFov * 0.5));
 
-    static Camera cam = new Camera(0.5, 0, 1.5, fFov, fAspectRatio);
+    static Camera cam = new Camera(-3, 13, 17, fFov, fAspectRatio);
 
     static ArrayList<ThreeDPolygon> polygons = new ArrayList<ThreeDPolygon>();
 
@@ -50,9 +50,11 @@ public class Main extends JPanel implements KeyListener {
     
     static double[] depthBuffer = new double[width * height];
 
-    static double speed = 2;
+    static double speed = 0.5;
 
-    static Color[] vals;
+    static Color[][] vals;
+    static Color[] disVals = {Color.BLACK, Color.GRAY, Color.PINK, Color.MAGENTA, Color.BLUE, Color.CYAN, Color.GREEN, Color.YELLOW, Color.ORANGE, Color.RED};
+    static BufferedImage[] image;
 
     public void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D)g;
@@ -69,6 +71,11 @@ public class Main extends JPanel implements KeyListener {
             for (int i = polygons.size() - 1; i >= 0; i--) {
                 polygons.get(i).updatePolygon(g);
             }
+            // g.drawImage(image[0], 0, 0, image[0].getWidth(), image[0].getHeight(), null);
+            // g.drawImage(image[1], 0, 0, image[1].getWidth(), image[1].getHeight(), null);
+            // g.drawImage(image[2], 0, 0, image[2].getWidth(), image[2].getHeight(), null);
+            // g.drawImage(image[3], 0, 0, image[3].getWidth(), image[3].getHeight(), null);
+            // g.drawImage(image[4], 0, 0, image[4].getWidth(), image[4].getHeight(), null);
         }
 
         /*BufferStrategy bs = getBufferStrategy();
@@ -100,7 +107,7 @@ public class Main extends JPanel implements KeyListener {
         }
 
         Point info = MouseInfo.getPointerInfo().getLocation();
-        rotationX += ((int)info.getX() - width/2)/2;
+        rotationX -= ((int)info.getX() - width/2)/2;
         //rotationX = (int)lastX.getX() - (int)info.getX();
         //lastX = MouseInfo.getPointerInfo().getLocation();
         if (rotationX > 360.0) {
@@ -133,9 +140,9 @@ public class Main extends JPanel implements KeyListener {
 
     public void move() {
         double rotX = -1 * Math.toRadians(rotationX);
-        cam.moveX(moveX*(speedX * Math.cos(rotX)) + moveZ*(-speedZ * Math.sin(rotX)));
+        cam.moveX(moveX*(-speedX * Math.cos(rotX)) + moveZ*(-speedZ * Math.sin(rotX)));
         cam.moveY(moveY*(-speedY));
-        cam.moveZ(moveX*(speedX * Math.sin(rotX)) + moveZ*(speedZ * Math.cos(rotX)));
+        cam.moveZ(moveX*(-speedX * Math.sin(rotX)) + moveZ*(speedZ * Math.cos(rotX)));
     }
 
     public static double getRotationX() {
@@ -338,7 +345,7 @@ public class Main extends JPanel implements KeyListener {
         mesh.triangles.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 1}, new double[]{0, 0, 1}, new double[]{0, 0, 0}), Color.BLACK));
         mesh.triangles.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 1}, new double[]{0, 0, 0}, new double[]{1, 0, 0}), Color.BLACK));
         */
-        Color cubeColor;
+        Color cubeColor = new Color(200, 200, 255);
         //South
         // polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 3, 1}, new double[]{0, 1, 3, 1}, new double[]{1, 1, 3, 1}, new double[]{0, 1, 1}, new double[]{0, 0, 1}, new double[]{1, 0, 1}), cubeColor));
         // polygons.add(new ThreeDPolygon(new Triangle(new double[]{0, 0, 3, 1}, new double[]{1, 1, 3, 1}, new double[]{1, 0, 3, 1}, new double[]{0, 1, 1}, new double[]{1, 0, 1}, new double[]{1, 1, 1}), cubeColor));
@@ -357,9 +364,9 @@ public class Main extends JPanel implements KeyListener {
         // //Bottom
         // polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4, 1}, new double[]{0, 0, 4, 1}, new double[]{0, 0, 3, 1}, new double[]{0, 1, 1}, new double[]{0, 0, 1}, new double[]{1, 0, 1}), cubeColor));
         // polygons.add(new ThreeDPolygon(new Triangle(new double[]{1, 0, 4, 1}, new double[]{0, 0, 3, 1}, new double[]{1, 0, 3, 1}, new double[]{0, 1, 1}, new double[]{1, 0, 1}, new double[]{1, 1, 1}), cubeColor));
-        BufferedImage image;
+        //BufferedImage[] image;
         try {
-            image = ImageIO.read(new File("cottage_diffuse.png"));
+            /*//image = ImageIO.read(new File("cottage_diffuse.png"));
 			//image = ImageIO.read(new File("handgun_C.jpg"));
             vals = new Color[image.getWidth() * image.getHeight()];
             for (int i = 0; i < image.getHeight(); i++) {
@@ -367,24 +374,97 @@ public class Main extends JPanel implements KeyListener {
                     vals[i * image.getWidth() + j] = new Color(image.getRGB(j, i));
                 }
             }
-            //loadObjectFromFile("lambo.obj", vals, image, false);
-            loadObjectFromFile("cottage_blender.obj", vals, image, true);
+            loadObjectFromFile("cottage_blender.obj", vals, Color.BLACK, image, true);
+            //loadObjectFromFile("gun.obj", vals, Color.BLACK, image, true);
+
+            image = ImageIO.read(new File("blue.png"));
+            vals = new Color[image.getWidth() * image.getHeight()];
+            for (int i = 0; i < image.getHeight(); i++) {
+                for (int j = 0; j < image.getWidth(); j++) {
+                    vals[i * image.getWidth() + j] = new Color(image.getRGB(j, i));
+                }
+            }
+            loadObjectFromFile("lambo.obj", vals, Color.BLUE, image, false, 6, 0, 0);*/
+            image = new BufferedImage[1];
+            image[0] = ImageIO.read(new File("gray.png"));
+            //image[0] = ImageIO.read(new File("testGrid.png"));
+            //image[0] = ImageIO.read(new File("cottage_diffuse.png"));
+            //image[0] = ImageIO.read(new File("handgun_C.jpg"));
+            for (int i = 1; i < image.length; i++) {
+                image[i] = new BufferedImage(image[i - 1].getWidth() / 2, image[i - 1].getHeight() / 2, BufferedImage.TYPE_INT_RGB);
+                for (int j = 0; j < image[i].getWidth(); j++) {
+                    for (int k = 0; k < image[i].getHeight(); k++) {
+                        Color temp = new Color(image[i - 1].getRGB(2 * j, 2 * k));
+                        int red = (temp).getRed(), green = (temp).getGreen(), blue = (temp).getBlue();
+                        for (int l = 0; l < 3; l++) {
+                            switch(l) {
+                                case 0:
+                                    temp = new Color(image[i - 1].getRGB(2 * j + 1, 2 * k));
+                                    break;
+                                case 1:
+                                    temp = new Color(image[i - 1].getRGB(2 * j, 2 * k + 1));
+                                    break;
+                                case 2:
+                                    temp = new Color(image[i - 1].getRGB(2 * j + 1, 2 * k + 1));
+                                    break;
+                            }
+                            red += (temp).getRed(); green += (temp).getGreen(); blue += (temp).getBlue();
+                        }
+                        red /= 4; green /= 4; blue /= 4;
+                        temp = new Color(red, green, blue);
+                        image[i].setRGB(j, k, temp.getRGB());
+                    }
+                }
+            }
+            
+            vals = new Color[image.length][];
+            for (int i = 0; i < image.length; i++) {
+                vals[i] = new Color[image[i].getWidth() * image[i].getHeight()];
+                for (int j = 0; j < image[i].getHeight(); j++) {
+                    for (int k = 0; k < image[i].getWidth(); k++) {
+                        vals[i][j * image[i].getWidth() + k] = new Color(image[i].getRGB(k, j));
+                    }
+                }
+            }
+
+            //loadObjectFromFile("cube.obj", vals, image, true);
+            //loadObjectFromFile("cottage_blender.obj", vals, image, true);
             //loadObjectFromFile("gun.obj", vals, image, true);
+            loadObjectFromFile("landscape.obj", vals, Color.gray, image, false);
+            /*image = new BufferedImage[1];
+            image[0] = ImageIO.read(new File("checkerboard.png"));
+            vals = new Color[image.length][];
+            for (int i = 0; i < image.length; i++) {
+                vals[i] = new Color[image[i].getWidth() * image[i].getHeight()];
+                for (int j = 0; j < image[i].getHeight(); j++) {
+                    for (int k = 0; k < image[i].getWidth(); k++) {
+                        vals[i][j * image[i].getWidth() + k] = new Color(image[i].getRGB(k, j));
+                    }
+                }
+            }
+            loadObjectFromFile("cube.obj", vals, image, true);*/
 		} catch (IOException e) {
-            vals = new Color[0];
+            vals = new Color[0][0];
 			e.printStackTrace();
 		}
 
         last = System.nanoTime();
+        System.out.println("done create");
         doneCreate = true;
     }
-
-    public static void loadObjectFromFile(String fileName, Color[] c, BufferedImage img, boolean flip) {
+    public static void loadObjectFromFile(String fileName, Color[][] c, BufferedImage img[], boolean flip) { 
+        loadObjectFromFile(fileName, c, Color.BLACK, img, flip, 0, 0, 0);
+    }
+    public static void loadObjectFromFile(String fileName, Color[][] c, Color backup, BufferedImage img[], boolean flip) { 
+        loadObjectFromFile(fileName, c, backup, img, flip, 0, 0, 0);
+    }
+    public static void loadObjectFromFile(String fileName, Color[][] c, Color backup, BufferedImage img[], boolean flip, double xOff, double yOff, double zOff) {
         ArrayList<double[]> verticeList = new ArrayList<double[]>();
         ArrayList<double[]> texPos = new ArrayList<double[]>();
         verticeList.add(new double[]{});
         texPos.add(new double[]{});
-        Color[] temp = {Color.BLACK};
+        int cnt = 0;
+        Color[][] temp = {{backup}};
         try {
             File obj = new File(fileName);
             Scanner fileReader = new Scanner(obj);
@@ -399,11 +479,16 @@ public class Main extends JPanel implements KeyListener {
                     if (data.charAt(1) == ' ') {
                         data = data.substring(data.indexOf(" ") + 1);
                         v1 = Double.parseDouble(data.substring(0, data.indexOf(" ")));
+                        v1 += xOff;
+
                         data = data.substring(data.indexOf(" ") + 1);
                         v2 = Double.parseDouble(data.substring(0, data.indexOf(" ")));
+                        v2 += yOff;
+
                         data = data.substring(data.indexOf(" ") + 1);
                         v3 = Double.parseDouble(data.substring(0));
                         verticeList.add(new double[]{v1, v2, v3});
+                        v3 += zOff;
                     }
                     else if (data.charAt(1) == 't') {
                         data = data.substring(data.indexOf(" ") + 1);
@@ -418,7 +503,7 @@ public class Main extends JPanel implements KeyListener {
                     }
                 }
                 else if (data.charAt(0) == 'f') {
-                    //if (data.contains("/")) {
+                    if (data.contains("/")) {
                         data = data.substring(data.indexOf(" ") + 1);
                         v1 = Double.parseDouble(data.substring(0, data.indexOf("/")));
                         data = data.substring(data.indexOf("/") + 1);
@@ -461,29 +546,53 @@ public class Main extends JPanel implements KeyListener {
                             }
                             if (vt3 == -1) {
                                 vt3 = 0;
+                                //if (cnt++ == 0)
                                 polygons.add(new ThreeDPolygon(new Triangle(verticeList.get((int)v1), verticeList.get((int)v3), verticeList.get((int)v4), texPos.get((int)vt1), texPos.get((int)vt3), texPos.get((int)vt4)), temp, img));
                                 vt3 = -1;
                             }
                             else {
+                                //if (cnt++ == 0)
                                 polygons.add(new ThreeDPolygon(new Triangle(verticeList.get((int)v1), verticeList.get((int)v3), verticeList.get((int)v4), texPos.get((int)vt1), texPos.get((int)vt3), texPos.get((int)vt4)), c, img));
                             }
                         }
-                    /*}
+                    }
                     else {
                         data = data.substring(data.indexOf(" ") + 1);
                         v1 = Double.parseDouble(data.substring(0, data.indexOf(" ")));
+                        vt1 = 0;
 
                         data = data.substring(data.indexOf(" ") + 1);
                         v2 = Double.parseDouble(data.substring(0, data.indexOf(" ")));
+                        vt2 = 0;
 
                         data = data.substring(data.indexOf(" ") + 1);
                         v3 = Double.parseDouble(data.substring(0));
-                    }*/
+                        vt3 = -1;
+
+                        if (data.indexOf(" ") != -1) {
+                            data = data.substring(data.indexOf(" ") + 1);
+                            v4 = Double.parseDouble(data.substring(0));
+                            vt4 = 0;
+
+                            if (vt3 == -1) {
+                                vt3 = 0;
+                                //if (cnt++ == 0)
+                                polygons.add(new ThreeDPolygon(new Triangle(verticeList.get((int)v1), verticeList.get((int)v3), verticeList.get((int)v4), texPos.get((int)vt1), texPos.get((int)vt3), texPos.get((int)vt4)), temp, img));
+                                vt3 = -1;
+                            }
+                            else {
+                                //if (cnt++ == 0)
+                                polygons.add(new ThreeDPolygon(new Triangle(verticeList.get((int)v1), verticeList.get((int)v3), verticeList.get((int)v4), texPos.get((int)vt1), texPos.get((int)vt3), texPos.get((int)vt4)), c, img));
+                            }
+                        }
+                    }
                     if (vt3 == -1) {
                         vt3 = 0;
+                        //if (cnt++ == 0)
                         polygons.add(new ThreeDPolygon(new Triangle(verticeList.get((int)v1), verticeList.get((int)v2), verticeList.get((int)v3), texPos.get((int)vt1), texPos.get((int)vt2), texPos.get((int)vt3)), temp, img));
                     }
                     else {
+                        //if (cnt++ == 0)
                         polygons.add(new ThreeDPolygon(new Triangle(verticeList.get((int)v1), verticeList.get((int)v2), verticeList.get((int)v3), texPos.get((int)vt1), texPos.get((int)vt2), texPos.get((int)vt3)), c, img));
                     }
                 }
