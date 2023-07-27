@@ -378,6 +378,6 @@ public class PolygonObject {
         g.fillPolygon(this.p);
     }
     public static double round(double x) {
-        return(Math.round(x * 1000)/1000.0);
+        return(Math.round(x * 1000.0)/1000.0);
     }
 }

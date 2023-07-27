@@ -386,7 +386,7 @@ public class Main extends JPanel implements KeyListener {
             }
             loadObjectFromFile("lambo.obj", vals, Color.BLUE, image, false, 6, 0, 0);*/
             image = new BufferedImage[1];
-            image[0] = ImageIO.read(new File("gray.png"));
+            image[0] = ImageIO.read(new File("objects/lambo.obj"));
             //image[0] = ImageIO.read(new File("testGrid.png"));
             //image[0] = ImageIO.read(new File("cottage_diffuse.png"));
             //image[0] = ImageIO.read(new File("handgun_C.jpg"));
@@ -428,9 +428,9 @@ public class Main extends JPanel implements KeyListener {
             }
 
             //loadObjectFromFile("cube.obj", vals, image, true);
-            //loadObjectFromFile("cottage_blender.obj", vals, image, true);
+            loadObjectFromFile("cottage_blender.obj", vals, image, true);
             //loadObjectFromFile("gun.obj", vals, image, true);
-            loadObjectFromFile("landscape.obj", vals, Color.gray, image, false);
+            //loadObjectFromFile("landscape.obj", vals, Color.gray, image, false);
             /*image = new BufferedImage[1];
             image[0] = ImageIO.read(new File("checkerboard.png"));
             vals = new Color[image.length][];
