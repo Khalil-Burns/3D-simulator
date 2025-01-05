@@ -45,8 +45,9 @@ To run the project, follow these steps:
 
 ## Project Structure
 
-- `src/`: Contains the Java source code for the engine.
-- `assets/`: Folder for 3D models (`.obj` files) and textures (image files).
+- `/`: Contains the Java source code for the engine.
+- `/objects/`: Folder for 3D models (`.obj` files)
+- `/textures/`: Folder for textures (image files).
 - `README.md`: Project description and instructions.
 - `Main.java`: Entry point of the program for running the engine.
 
