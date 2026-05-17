@@ -15,6 +15,9 @@ The objects are rendered using **triangles** for full compatibility with Blender
 - **Import `.obj` files**: Supports importing 3D objects created with tools like Blender (objects must be composed of triangles).
 - **Movement and camera control**: Navigate and look around in the 3D environment.
 
+## MAIN DEMO
+https://github.com/user-attachments/assets/342b3df3-5fac-488a-bb6d-a36d98b516e5
+
 ## DESMOS DEMO
 
 The initial prototype of this project began on **Desmos**, where I experimented with projecting 3D points onto a 2D screen. The graphing calculator provided an easy environment to play around with 3D concepts. You can view my **Desmos prototype** [here](https://www.desmos.com/calculator/v5mwlcvbec).
